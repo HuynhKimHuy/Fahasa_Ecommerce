@@ -55,14 +55,13 @@ const PORT = 5000
 app.use(express.static(path.join(__dirname, 'public')))
 // ensure standalone JS assets are reachable even if current route adds prefixes
 
-
 app.use('/js', express.static(path.join(__dirname, 'public/js')))
-
-
 app.use("/cart", cartRouter)
 app.use('/collection', CollectionRoute)
 app.use('/', HomeRoute)
 app.use('/api/books', CreateDBRoute)
+
+// running sever
 app.listen(PORT, ()=>{
     console.log("Sever running on PORT ",PORT);
 })
