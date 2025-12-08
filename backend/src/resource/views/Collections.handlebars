@@ -1,0 +1,34 @@
+<section class="collections">
+  <div class="container">
+    <div class="collections__header">
+      <h1>Bộ sưu tập nổi bật</h1>
+      <p class="collections__subtitle">Tổng {{books.length}} đầu sách đang được bán chạy nhất.</p>
+    </div>
+    
+    {{#if books.length}}
+    <div class="collections__grid">
+      {{#each books}}
+      <article class="collections__card">
+        <a class="collections__card-link" href="/collection/{{this.slug}}">
+          <div class="collections__card-thumb">
+            <img src="{{this.coverImage}}" alt="{{this.title}}" />
+          </div>
+          <div class="collections__card-body">
+            <h2 class="collections__card-title">{{this.title}}</h2>
+            <p class="collections__card-author">{{this.author}}</p>
+            <div class="collections__card-price-row">
+              <span class="collections__card-price">{{formatPrice this.newPrice}}</span>
+              {{#if this.discountPercent}}
+              <span class="collections__card-discount">-{{this.discountPercent}}%</span>
+              {{/if}}
+            </div>
+          </div>
+        </a>
+      </article>
+      {{/each}}
+    </div>
+    {{else}}
+    <p class="collections__empty">Hiện chưa có sản phẩm nào trong bộ sưu tập.</p>
+    {{/if}}
+  </div>
+</section>

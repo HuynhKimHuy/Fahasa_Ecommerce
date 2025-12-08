@@ -1,0 +1,70 @@
+<section class="cart-page">
+  <div class="container">
+    <div class="cart-page__header">
+      <p class="cart-page__tag">Giỏ hàng của bạn</p>
+      <h1>Kiểm tra đơn hàng trước khi thanh toán</h1>
+      <p class="cart-page__desc">Chỉnh sửa số lượng hoặc loại bỏ sản phẩm không cần thiết trước khi gửi đơn.</p>
+    </div>
+
+    {{#if cart.items.length}}
+      <div class="cart-page__grid">
+        <div class="cart-page__list card">
+          <div class="cart-table">
+            <div class="cart-table__head">
+              <span>Sản phẩm</span>
+              <span>Đơn giá</span>
+              <span>Số lượng</span>
+              <span>Thành tiền</span>
+              <span></span>
+            </div>
+            <div class="cart-table__body">
+              {{#each cart.items}}
+                <article class="cart-item">
+                  <div class="cart-item__media">
+                    <img src="{{this.product.coverImage}}" alt="{{this.product.title}}">
+                  </div>
+                  <div class="cart-item__info">
+                    <a href="/collection/{{this.product.slug}}" class="cart-item__title">{{this.product.title}}</a>
+                    <p class="cart-item__author">{{this.product.author}}</p>
+                    <span class="cart-item__price">{{formatPrice this.price}}</span>
+                  </div>
+                  <form class="cart-item__qty" method="post" action="/cart/update/{{this.bookId}}">
+                    <input type="number" name="qty" min="0" value="{{this.qty}}">
+                    <button type="submit">Cập nhật</button>
+                  </form>
+                  <div class="cart-item__total">{{formatPrice this.totalItemPrice}}</div>
+                  <form class="cart-item__remove" method="post" action="/cart/remove/{{this.bookId}}">
+                    <button type="submit" aria-label="Xoá {{this.product.title}}">Xoá</button>
+                  </form>
+                </article>
+              {{/each}}
+            </div>
+          </div>
+        </div>
+        <aside class="cart-page__summary card">
+          <h2>Tổng đơn hàng</h2>
+          <div class="cart-summary__line">
+            <span>Số lượng sản phẩm</span>
+            <strong>{{cart.totalQty}}</strong>
+          </div>
+          <div class="cart-summary__line">
+            <span>Thành tiền</span>
+            <strong>{{formatPrice cart.totalPrice}}</strong>
+          </div>
+          <div class="cart-summary__line cart-summary__line--total">
+            <span>Thành tiền thanh toán</span>
+            <strong>{{formatPrice cart.totalPrice}}</strong>
+          </div>
+          <a href="/collection" class="btn btn--ghost cart-summary__btn">Tiếp tục mua sắm</a>
+          <button type="button" class="btn btn--primary cart-summary__btn">Tiến hành thanh toán</button>
+        </aside>
+      </div>
+    {{else}}
+      <div class="cart-page__empty">
+        <p>Giỏ hàng của bạn đang trống.</p>
+        <p>Khi bạn chọn sách, chúng sẽ xuất hiện tại đây.</p>
+        <a href="/collection" class="btn btn--primary">Mua sắm ngay</a>
+      </div>
+    {{/if}}
+  </div>
+</section>

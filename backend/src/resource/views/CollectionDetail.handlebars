@@ -1,0 +1,52 @@
+<section class="collection-detail">
+  <div class="container">
+    {{#if notFound}}
+    <div class="collection-detail__empty">
+      <h1>Không tìm thấy sản phẩm</h1>
+      <p>Không có sách nào có slug <strong>{{slug}}</strong>.</p>
+      <a href="/collection" class="btn btn--primary">Quay lại bộ sưu tập</a>
+    </div>
+    {{else}}
+    <div class="collection-detail__inner">
+      <div class="collection-detail__media">
+        <img src="{{book.coverImage}}" alt="{{book.title}}">
+      </div>
+      <div class="collection-detail__info">
+        <p class="collection-detail__tag">{{book.category}}</p>
+        <h1>{{book.title}}</h1>
+        <p class="collection-detail__author">Tác giả: {{book.author}}</p>
+        <p class="collection-detail__description">{{book.description}}</p>
+        <div class="collection-detail__price-row">
+          <span class="collection-detail__price">{{formatPrice book.newPrice}}</span>
+          {{#if book.discountPercent}}
+            <span class="collection-detail__discount">-{{book.discountPercent}}%</span>
+            <span class="collection-detail__old-price">{{formatPrice book.oldPrice}}</span>
+          {{/if}}
+        </div>
+        <p class="collection-detail__long">{{book.longDescription}}</p>
+        <ul class="collection-detail__meta">
+          <li>Nhà xuất bản: {{book.publisher}}</li>
+          <li>Năm xuất bản: {{book.publishYear}}</li>
+          <li>Trang: {{book.size}}</li>
+          <li>Loại bìa: {{book.coverType}}</li>
+        </ul>
+        <div class="collection-detail__cta">
+          <div class="collection-detail__sold">
+            Đã bán: <strong>{{book.sold}}</strong>
+          </div>
+          <form class="collection-detail__cart" action="/cart/add/{{book._id}}" method="post">
+            <label>
+              <span>Số lượng</span>
+              <input type="number" name="qty" min="1" value="1">
+            </label>
+            <button type="submit" class="btn btn--primary">Thêm vào giỏ</button>
+          </form>
+          <a href="/collection" class="btn btn--ghost">Xem thêm bộ sưu tập</a>
+        </div>
+      </div>
+    </div>
+    {{/if}}
+  </div>
+</section>
+
+                    

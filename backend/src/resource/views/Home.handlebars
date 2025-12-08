@@ -1,0 +1,150 @@
+<section class="banner-wrapper">
+  <div class="container">
+    <div class="promo-grid">
+      <!-- Banner lớn bên trái -->
+      <div class="promo-item promo-item--main promo-slide-wrap">
+        <div class="promo-slider js-promo-slider">
+          <div class="promo-slider__item">
+            <a class="promo-slider__link" href="/sale">
+              <img src="/img/banner_wrapper.png" alt="Main Banner">
+            </a>
+          </div>
+          <div class="promo-slider__item">
+            <a class="promo-slider__link" href="/sale">
+              <img src="https://cdn1.fahasa.com/media/magentothem/banner7/BinhTayTemplate_KC_Resize_840x320.png" alt="Main Banner">
+            </a>
+          </div>
+          <div class="promo-slider__item">
+            <a class="promo-slider__link" href="/sale">
+              <img src="https://cdn1.fahasa.com/media/magentothem/banner7/vongquaymayman_840x320.png" alt="Main Banner">
+            </a>
+          </div>
+          <div class="promo-slider__item">
+            <a class="promo-slider__link" href="/sale">
+              <img src="https://cdn1.fahasa.com/media/magentothem/banner7/TrangUuDai_Resize_840x320.png" alt="Main Banner">
+            </a>
+          </div>
+          <div class="promo-slider__item">
+            <a class="promo-slider__link" href="/sale">
+              <img src="https://cdn1.fahasa.com/media/magentothem/banner7/MayoraT12_Resize_840x320.png" alt="Main Banner">
+            </a>
+          </div>
+          <div class="promo-slider__item">
+            <a class="promo-slider__link" href="/sale">
+              <img src="https://cdn1.fahasa.com/media/magentothem/banner7/LDP_STABINI_840x320.png" alt="Main Banner">
+            </a>
+          </div>
+          <div class="promo-slider__item">
+            <a class="promo-slider__link" href="/sale">
+              <img src="https://cdn1.fahasa.com/media/magentothem/banner7/DoChoiChoTre_840x320_1.png" alt="Main Banner">
+            </a>
+          </div>
+        </div>
+        <button class="promo-slider__nav promo-slider__nav--prev js-promo-prev" type="button" aria-label="Ảnh trước">
+          <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        <button class="promo-slider__nav promo-slider__nav--next js-promo-next" type="button" aria-label="Ảnh tiếp theo">
+          <i class="fa-solid fa-chevron-right"></i>
+        </button>
+      </div>
+      
+      <!-- Banner nhỏ trên bên phải -->
+      <a class="promo-item">
+        <img onclick="hehe" src="/img/Ngot_ngao_tung_mung_banh.png" alt="Top Banner">
+      </a>
+
+      <!-- Banner nhỏ dưới bên phải -->
+      <a class="promo-item">
+        <img src="/img/thang12_2025_vpbank.png" alt="Bottom Banner">
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="banner_ticket">
+  <div class="container">
+    <div class="banner_inner">
+      <a href="" class="sale_ticket">
+        <img src="https://cdn1.fahasa.com/media/wysiwyg/Thang-12-2025/Homepage_T12_small_TanViet.png" alt="">
+      </a>
+      <a href="" class="sale_ticket">
+        <img src="https://cdn1.fahasa.com/media/wysiwyg/Thang-12-2025/NgoaiVan_t12_310x210.png" alt="">
+      </a>
+      <a href="" class="sale_ticket">
+        <img src="https://cdn1.fahasa.com/media/wysiwyg/Thang-12-2025/DoChoiChoTre_310x210.png" alt="">
+      </a>
+      <a href="" class="sale_ticket">
+        <img src="https://cdn1.fahasa.com/media/wysiwyg/Thang-12-2025/Homepage_T12_1GiangSinh.png" alt="">
+      </a>
+    </div>
+  </div>
+</section>
+
+
+<section class="flash-sale">
+  <div class="container">
+    <div class="flash-sale__header">
+      <div class="flash-sale__left">
+        <a class="flash-sale__logo">
+          <img src="https://cdn1.fahasa.com/skin/frontend/ma_vanese/fahasa/images/flashsale/label-flashsale.svg?q="
+            alt="">
+        </a>
+        <span class="flash-sale__label">Kết thúc trong</span>
+        <div class="flash-sale__countdown">
+          <span class="time-box">00</span>
+          <span>:</span>
+          <span class="time-box">00</span>
+          <span>:</span>
+          <span class="time-box">00</span>
+        </div>
+      </div>
+
+      <a href="/flash-sale" class="flash-sale__view-all">
+        Xem tất cả &rarr;
+      </a>
+    </div>
+
+    <div class="flash-sale__carousel">
+      <button class="flash-sale__nav flash-sale__nav--prev js-flash-sale-prev" type="button"
+        aria-label="Trượt sang trái">
+        <i class="fa-solid fa-chevron-left"></i>
+      </button>
+      <div class="flash-sale__list js-flash-sale-list">
+        {{#each saleBooks}}
+        <article class="flash-sale__item">
+          <a class="flash-sale__item-link" href="/collection/{{this.slug}}">
+            <div class="flash-sale__thumb">
+              <img src="{{this.coverImage}}" alt="{{this.title}}" />
+            </div>
+
+            <h3 class="flash-sale__name">
+              {{this.title}}
+            </h3>
+
+            <div class="flash-sale__price-row">
+              <span class="flash-sale__price">{{formatPrice this.newPrice}}</span>
+              <span class="flash-sale__discount">-{{this.discountPercent}}%</span>
+            </div>
+
+            {{#if this.oldPrice}}
+            <div class="flash-sale__old-price">
+              {{formatPrice this.oldPrice}}
+            </div>
+            {{/if}}
+
+            <div class="flash-sale__sold">
+              <div class="flash-sale__sold-bar">
+                <span style="width: {{this.soldPercent}}%;"></span>
+              </div>
+              <span class="flash-sale__sold-text">
+                Đã bán {{this.sold}}
+              </span>
+            </div>
+          </a>
+        </article>
+        {{/each}}
+      </div>
+
+    </div>
+  </div>
+</section>
