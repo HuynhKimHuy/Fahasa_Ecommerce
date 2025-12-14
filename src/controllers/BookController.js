@@ -8,7 +8,7 @@ class BookController {
         slug,
         category,
         publisher,
-        suppelier,
+        supplier,
         publishYear,
         author,
         oldPrice,
@@ -32,7 +32,7 @@ class BookController {
         !slug ||
         !category ||
         !publisher ||
-        !suppelier ||
+        !supplier ||
         !publishYear ||
         !author ||
         sold == null ||

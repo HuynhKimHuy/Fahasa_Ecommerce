@@ -1,0 +1,48 @@
+<section class="flash-sale-page">
+  <div class="container">
+    <div class="flash-sale-page__header">
+      <div>
+        <p class="flash-sale-page__tag">flash sale</p>
+        <h1>Ưu đãi sốc mỗi ngày</h1>
+      </div>
+      <a class="flash-sale__view-all" href="/collection">Xem thêm bộ sưu tập</a>
+    </div>
+
+    {{#if saleBooks.length}}
+      <div class="flash-sale-page__grid">
+        {{#each saleBooks}}
+          <article class="flash-sale__item">
+            <a class="flash-sale__item-link" href="/collection/{{this.slug}}">
+              <div class="flash-sale__thumb">
+                <img src="{{this.coverImage}}" alt="{{this.title}}" loading="lazy"/>
+              </div>
+              <div class="flash-sale__body">
+                <h3 class="flash-sale__name">{{this.title}}</h3>
+                <p class="flash-sale__author">{{this.author}}</p>
+                <div class="flash-sale__price-row">
+                  <span class="flash-sale__price">{{formatPrice this.newPrice}}</span>
+                  {{#if this.discountPercent}}
+                    <span class="flash-sale__discount">-{{this.discountPercent}}%</span>
+                  {{/if}}
+                </div>
+                {{#if this.oldPrice}}
+                  <div class="flash-sale__old-price">{{formatPrice this.oldPrice}}</div>
+                {{/if}}
+                <div class="flash-sale__sold">
+                  <div class="flash-sale__sold-bar">
+                    <span style="width: {{this.soldPercent}}%;"></span>
+                  </div>
+                  <span class="flash-sale__sold-text">
+                    Đã bán {{this.sold}}
+                  </span>
+                </div>
+              </div>
+            </a>
+          </article>
+        {{/each}}
+      </div>
+    {{else}}
+      <p class="flash-sale__empty">Hiện chưa có chương trình Flash Sale nào.</p>
+    {{/if}}
+  </div>
+</section>

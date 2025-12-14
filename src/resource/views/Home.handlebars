@@ -11,7 +11,8 @@
           </div>
           <div class="promo-slider__item">
             <a class="promo-slider__link" href="/sale">
-              <img src="https://cdn1.fahasa.com/media/magentothem/banner7/BinhTayTemplate_KC_Resize_840x320.png" alt="Main Banner">
+              <img src="https://cdn1.fahasa.com/media/magentothem/banner7/BinhTayTemplate_KC_Resize_840x320.png"
+                alt="Main Banner">
             </a>
           </div>
           <div class="promo-slider__item">
@@ -21,12 +22,14 @@
           </div>
           <div class="promo-slider__item">
             <a class="promo-slider__link" href="/sale">
-              <img src="https://cdn1.fahasa.com/media/magentothem/banner7/TrangUuDai_Resize_840x320.png" alt="Main Banner">
+              <img src="https://cdn1.fahasa.com/media/magentothem/banner7/TrangUuDai_Resize_840x320.png"
+                alt="Main Banner">
             </a>
           </div>
           <div class="promo-slider__item">
             <a class="promo-slider__link" href="/sale">
-              <img src="https://cdn1.fahasa.com/media/magentothem/banner7/MayoraT12_Resize_840x320.png" alt="Main Banner">
+              <img src="https://cdn1.fahasa.com/media/magentothem/banner7/MayoraT12_Resize_840x320.png"
+                alt="Main Banner">
             </a>
           </div>
           <div class="promo-slider__item">
@@ -43,11 +46,12 @@
         <button class="promo-slider__nav promo-slider__nav--prev js-promo-prev" type="button" aria-label="Ảnh trước">
           <i class="fa-solid fa-chevron-left"></i>
         </button>
-        <button class="promo-slider__nav promo-slider__nav--next js-promo-next" type="button" aria-label="Ảnh tiếp theo">
+        <button class="promo-slider__nav promo-slider__nav--next js-promo-next" type="button"
+          aria-label="Ảnh tiếp theo">
           <i class="fa-solid fa-chevron-right"></i>
         </button>
       </div>
-      
+
       <!-- Banner nhỏ trên bên phải -->
       <a class="promo-item">
         <img onclick="hehe" src="/img/Ngot_ngao_tung_mung_banh.png" alt="Top Banner">
@@ -60,7 +64,7 @@
     </div>
   </div>
 </section>
-
+{{!-- ticket --}}
 <section class="banner_ticket">
   <div class="container">
     <div class="banner_inner">
@@ -80,7 +84,7 @@
   </div>
 </section>
 
-
+{{!-- flash sale --}}
 <section class="flash-sale">
   <div class="container">
     <div class="flash-sale__header">
@@ -145,6 +149,36 @@
         {{/each}}
       </div>
 
+    </div>
+  </div>
+</section>
+
+{{!-- danh mục --}}
+
+<section class="catalogy">
+  <div class="container">
+    <div class="catalogy_inner">
+      <div class="catalogy_header">
+        <span class="catalogy_header-icon">
+          <i class="fa-solid fa-border-all"></i>
+        </span>
+        <div class="catalogy_header-desc">Danh mục sản phẩm</div>
+      </div>
+
+      <div class="catalogy_list">
+        {{#if categories.length}}
+          {{#each categories}}
+            <div class="catalogy_list-item">
+              <a href="/collection?category={{urlEncode this.name}}">
+                <img src="{{this.coverImage}}" alt="{{this.name}}" class="catalogy_list-img" loading="lazy">
+              </a>
+              <p>{{this.name}}</p>
+            </div>
+          {{/each}}
+        {{else}}
+          <p class="catalogy__empty">Chưa có danh mục nào để hiển thị.</p>
+        {{/if}}
+      </div>
     </div>
   </div>
 </section>

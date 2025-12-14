@@ -12,7 +12,7 @@ import CollectionRoute from './routes/Collection.Route.js';
 import CreateDBRoute from './routes/CreateDB.Route.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
+import compression from 'compression';
 dotenv.config({ path: path.join(__dirname, '.env') });
 ConnectDB.getInstance();
 
@@ -20,6 +20,7 @@ const app = express()
 
 
 app.use(express.json())
+app.use(compression())
 app.use(express.urlencoded({ extended: true }))
 app.use(
   session({
@@ -43,6 +44,10 @@ const hbs = engine({
       const number = typeof value === "number" ? value : Number(value);
       if (Number.isNaN(number)) return "";
       return `${number.toLocaleString("vi-VN")}đ`;
+    },
+    urlEncode(value) {
+      if (value === undefined || value === null) return "";
+      return encodeURIComponent(value);
     },
   },
 });

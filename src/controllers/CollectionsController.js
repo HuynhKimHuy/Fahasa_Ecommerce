@@ -3,16 +3,26 @@ import { normalizeBookPrices, normalizeBooksList } from '../helpers/book.helper.
 
 class CollectionsController {
     async index(req, res, next) {
-        try {
-            const booksRaw = await Book.find({ isActive: true }).lean();
-            const books = normalizeBooksList(booksRaw);
-            await res.render('Collections', { books });
-        } catch (error) {
-            console.error('Unable to fetch collections', error);
-            next(error);
-        }
-    }
+    try {
+      const { category } = req.query
 
+      const filter = {}
+      if (category) filter.category = category
+        console.log(filter)
+      const booksRaw = await Book.find(filter).lean()
+      const books = normalizeBooksList(booksRaw)
+
+      const categories = await Book.distinct('category')
+      return res.render('Collections', {
+        books,
+        categories,
+        activeCategory: category || 'all',
+      })
+    } catch (error) {
+      console.error('Unable to fetch collections', error)
+      next(error)
+    }
+  }
     async show(req, res, next) {
         try {
             const { slug } = req.params;

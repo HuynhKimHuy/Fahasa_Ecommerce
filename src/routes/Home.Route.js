@@ -5,6 +5,7 @@ const HomeRoute = express.Router()
 
 // HomeRoute.get('/GifCookie', HomeController.giftCookie)
 HomeRoute.get('/', HomeController.index)
+HomeRoute.get('/flash-sale', HomeController.flashSale)
 HomeRoute.get('/:slug', HomeController.show)
 
 export default HomeRoute
