@@ -4,41 +4,43 @@
       <!-- Banner lớn bên trái -->
       <div class="promo-item promo-item--main promo-slide-wrap">
         <div class="promo-slider js-promo-slider">
+
+          {{!-- img wrapper --}}
           <div class="promo-slider__item">
-            <a class="promo-slider__link" href="/sale">
+            <a class="promo-slider__link" href="/gift-page">
               <img src="/img/banner_wrapper.png" alt="Main Banner">
             </a>
           </div>
           <div class="promo-slider__item">
-            <a class="promo-slider__link" href="/sale">
+            <a class="promo-slider__link" href="/gift-page">
               <img src="https://cdn1.fahasa.com/media/magentothem/banner7/BinhTayTemplate_KC_Resize_840x320.png"
                 alt="Main Banner">
             </a>
           </div>
           <div class="promo-slider__item">
-            <a class="promo-slider__link" href="/sale">
+            <a class="promo-slider__link" href="/gift-page">
               <img src="https://cdn1.fahasa.com/media/magentothem/banner7/vongquaymayman_840x320.png" alt="Main Banner">
             </a>
           </div>
           <div class="promo-slider__item">
-            <a class="promo-slider__link" href="/sale">
+            <a class="promo-slider__link" href="/gift-page">
               <img src="https://cdn1.fahasa.com/media/magentothem/banner7/TrangUuDai_Resize_840x320.png"
                 alt="Main Banner">
             </a>
           </div>
           <div class="promo-slider__item">
-            <a class="promo-slider__link" href="/sale">
+            <a class="promo-slider__link" href="/gift-page">
               <img src="https://cdn1.fahasa.com/media/magentothem/banner7/MayoraT12_Resize_840x320.png"
                 alt="Main Banner">
             </a>
           </div>
           <div class="promo-slider__item">
-            <a class="promo-slider__link" href="/sale">
+            <a class="promo-slider__link" href="/gift-page">
               <img src="https://cdn1.fahasa.com/media/magentothem/banner7/LDP_STABINI_840x320.png" alt="Main Banner">
             </a>
           </div>
           <div class="promo-slider__item">
-            <a class="promo-slider__link" href="/sale">
+            <a class="promo-slider__link" href="/gift-page">
               <img src="https://cdn1.fahasa.com/media/magentothem/banner7/DoChoiChoTre_840x320_1.png" alt="Main Banner">
             </a>
           </div>
@@ -114,6 +116,7 @@
         <i class="fa-solid fa-chevron-left"></i>
       </button>
       <div class="flash-sale__list js-flash-sale-list">
+
         {{#each saleBooks}}
         <article class="flash-sale__item">
           <a class="flash-sale__item-link" href="/collection/{{this.slug}}">
@@ -146,8 +149,13 @@
             </div>
           </a>
         </article>
+
         {{/each}}
       </div>
+      <button class="flash-sale__nav flash-sale__nav--next js-flash-sale-next" type="button"
+        aria-label="Trượt sang phải">
+        <i class="fa-solid fa-chevron-right"></i>
+      </button>
 
     </div>
   </div>
@@ -167,16 +175,16 @@
 
       <div class="catalogy_list">
         {{#if categories.length}}
-          {{#each categories}}
-            <div class="catalogy_list-item">
-              <a href="/collection?category={{urlEncode this.name}}">
-                <img src="{{this.coverImage}}" alt="{{this.name}}" class="catalogy_list-img" loading="lazy">
-              </a>
-              <p>{{this.name}}</p>
-            </div>
-          {{/each}}
+        {{#each categories}}
+        <div class="catalogy_list-item">
+          <a href="/collection?category={{urlEncode this.name}}">
+            <img src="{{this.coverImage}}" alt="{{this.name}}" class="catalogy_list-img" loading="lazy">
+          </a>
+          <p>{{this.name}}</p>
+        </div>
+        {{/each}}
         {{else}}
-          <p class="catalogy__empty">Chưa có danh mục nào để hiển thị.</p>
+        <p class="catalogy__empty">Chưa có danh mục nào để hiển thị.</p>
         {{/if}}
       </div>
     </div>

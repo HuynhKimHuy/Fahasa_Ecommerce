@@ -37,6 +37,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
   prevBtn?.addEventListener("click", goToPrev);
   nextBtn?.addEventListener("click", goToNext);
+
+  const flashSaleWrap = document.querySelector(".flash-sale__carousel");
+  const flashSaleList = flashSaleWrap?.querySelector(".js-flash-sale-list");
+  const flashSalePrev = flashSaleWrap?.querySelector(".js-flash-sale-prev");
+  const flashSaleNext = flashSaleWrap?.querySelector(".js-flash-sale-next");
+
+  const scrollFlashSale = (direction) => {
+    if (!flashSaleList) {
+      return;
+    }
+
+    const firstItem = flashSaleList.querySelector(".flash-sale__item");
+    const gap = 12; // matches the spacing defined in SCSS
+    const step = (firstItem?.offsetWidth ?? flashSaleList.clientWidth) + gap;
+    if (!step) {
+      return;
+    }
+
+    flashSaleList.scrollBy({
+      left: step * direction,
+      behavior: "smooth",
+    });
+  };
+
+  flashSalePrev?.addEventListener("click", () => scrollFlashSale(-1));
+  flashSaleNext?.addEventListener("click", () => scrollFlashSale(1));
 });
-
-

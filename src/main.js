@@ -1,4 +1,5 @@
 import express from 'express'
+import morgan from 'morgan';
 import { engine } from 'express-handlebars';
 import dotenv from 'dotenv'
 import session from 'express-session'
@@ -17,10 +18,11 @@ dotenv.config({ path: path.join(__dirname, '.env') });
 ConnectDB.getInstance();
 
 const app = express()
-
+import { Router } from 'express';
 
 app.use(express.json())
 app.use(compression())
+app.use(morgan('combined'))
 app.use(express.urlencoded({ extended: true }))
 app.use(
   session({
@@ -59,12 +61,15 @@ const PORT = 5000
 
 app.use(express.static(path.join(__dirname, 'public')))
 // ensure standalone JS assets are reachable even if current route adds prefixes
-
 app.use('/js', express.static(path.join(__dirname, 'public/js')))
-app.use("/cart", cartRouter)
-app.use('/collection', CollectionRoute)
-app.use('/', HomeRoute)
-app.use('/api/books', CreateDBRoute)
+
+const routeConfigs = [
+  { path: '/cart', handler: cartRouter },
+  { path: '/collection', handler: CollectionRoute },
+  { path: '/', handler: HomeRoute },
+  { path: '/api/books', handler: CreateDBRoute },
+]
+routeConfigs.forEach(({ path, handler }) => app.use(path, handler))
 
 // running sever
 app.listen(PORT, ()=>{

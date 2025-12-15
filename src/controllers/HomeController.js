@@ -49,9 +49,9 @@ class HomeController{
             next(error);
         }
     }
-    async giftCookie(req,res,next){
+    async giftPage(req,res,next){
         try {
-            return res.render('GifCookie')
+            return res.render('GiftPage')
         } catch (error) {
             console.log("Cannot get GifCookie");
         }
