@@ -1,0 +1,16 @@
+<section class="auth-page">
+  <div class="auth-card">
+    <div class="auth-card__header">
+      <p class="auth-card__eyebrow">Quản lý phiên</p>
+      <h1>Đăng xuất tài khoản</h1>
+      <p>Bạn đang đăng nhập với tên {{user.fullName}}. Hãy xác nhận nếu muốn kết thúc phiên làm việc.</p>
+    </div>
+
+    <form class="auth-form" action="/auth/logout" method="post">
+      <div class="auth-form__actions">
+        <button type="submit" class="btn btn--danger">Đăng xuất ngay</button>
+        <a href="/" class="btn btn--outline">Ở lại mua sắm</a>
+      </div>
+    </form>
+  </div>
+</section>

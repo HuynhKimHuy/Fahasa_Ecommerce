@@ -1,0 +1,126 @@
+<div class="admin-page">
+  <div class="container"></div>
+  </header>
+
+  <section class="admin-form-card">
+    <div class="container">
+      <form action="{{action}}" method="post" class="admin-book-form">
+        <div class="form-grid">
+          <label>
+            <span>Tiêu đề sách</span>
+            <input type="text" name="title" value="{{book.title}}" required />
+          </label>
+
+          <label>
+            <span>Slug (đường dẫn)</span>
+            <input type="text" name="slug" value="{{book.slug}}" />
+          </label>
+
+          <label>
+            <span>Tác giả</span>
+            <input type="text" name="author" value="{{book.author}}" required />
+          </label>
+
+          <label>
+            <span>Thể loại</span>
+            <input type="text" name="category" value="{{book.category}}" required />
+          </label>
+
+          <label>
+            <span>Nhà xuất bản</span>
+            <input type="text" name="publisher" value="{{book.publisher}}" />
+          </label>
+
+          <label>
+            <span>Nhà cung cấp</span>
+            <input type="text" name="supplier" value="{{book.supplier}}" />
+          </label>
+
+          <label>
+            <span>Năm xuất bản</span>
+            <input type="number" name="publishYear" min="1900" max="2100" value="{{book.publishYear}}" />
+          </label>
+
+          <label>
+            <span>Ảnh bìa (URL)</span>
+            <input type="text" name="coverImage" value="{{book.coverImage}}" />
+          </label>
+
+          <label>
+            <span>Loại bìa</span>
+            <select name="coverType">
+              <option value="">- Chọn -</option>
+              <option value="Bìa cứng" {{#if (eq book.coverType "Bìa cứng" )}}selected{{/if}}>Bìa cứng</option>
+              <option value="Bìa mềm" {{#if (eq book.coverType "Bìa mềm" )}}selected{{/if}}>Bìa mềm</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Kích thước</span>
+            <input type="text" name="size" value="{{book.size}}" />
+          </label>
+
+          <label>
+            <span>Giá gốc</span>
+            <input type="number" name="oldPrice" min="0" step="0.01" value="{{book.oldPrice}}" required />
+          </label>
+
+          <label>
+            <span>Giá bán</span>
+            <input type="number" name="newPrice" min="0" step="0.01" value="{{book.newPrice}}" required />
+          </label>
+
+          <label>
+            <span>Giá niêm yết (không bắt buộc)</span>
+            <input type="number" name="price" min="0" step="0.01" value="{{book.price}}" />
+          </label>
+
+          <label>
+            <span>% giảm giá</span>
+            <input type="number" name="discountPercent" min="0" max="100" value="{{book.discountPercent}}" />
+          </label>
+
+          <label>
+            <span>Tồn kho</span>
+            <input type="number" name="stock" min="0" value="{{book.stock}}" />
+          </label>
+
+          <label>
+            <span>Đã bán</span>
+            <input type="number" name="sold" min="0" value="{{book.sold}}" />
+          </label>
+        </div>
+
+        <label class="admin-book-form__textarea">
+          <span>Mô tả ngắn</span>
+          <textarea name="description">{{book.description}}</textarea>
+        </label>
+
+        <label class="admin-book-form__textarea">
+          <span>Mô tả chi tiết</span>
+          <textarea name="longDescription">{{book.longDescription}}</textarea>
+        </label>
+
+        <div class="admin-book-form__toggles">
+          <label>
+            <input type="checkbox" name="isActive" {{#if book.isActive}}checked{{/if}} />
+            <span>Hiển thị</span>
+          </label>
+          <label>
+            <input type="checkbox" name="isHighlight" {{#if book.isHighlight}}checked{{/if}} />
+            <span>Nổi bật</span>
+          </label>
+          <label>
+            <input type="checkbox" name="isFlashSale" {{#if book.isFlashSale}}checked{{/if}} />
+            <span>Flash sale</span>
+          </label>
+        </div>
+
+        <div class="admin-book-form__actions">
+          <button type="submit" class="btn btn--primary">{{submitLabel}}</button>
+          <a href="/admin/books" class="btn btn--text">Huỷ</a>
+        </div>
+      </form>
+    </div>
+  </section>
+</div>

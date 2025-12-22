@@ -1,0 +1,233 @@
+<div class="admin-page">
+  <header class="admin-hero">
+    <div>
+      <p class="admin-hero__eyebrow">Quản trị hệ thống</p>
+      <h1>Quản lý sách</h1>
+      <p class="admin-hero__description">
+        Xem toàn bộ danh mục, thay đổi trạng thái, và duy trì thông tin hàng tồn kho ngay lập tức.
+      </p>
+    </div>
+    <div class="admin-hero__actions">
+      <a class="btn btn--primary" href="/admin/books/new">Tạo sách mới</a>
+    </div>
+  </header>
+
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <div class="admin-sidebar__section">
+        <h3>Danh mục</h3>
+        <a class="admin-sidebar__link {{#if (eq filters.category "all")}}is-active{{/if}}" href="/admin/books">
+          <span>Tất cả</span>
+          <span class="admin-sidebar__count">{{stats.totalBooks}}</span>
+        </a>
+        {{#each categories}}
+          <a
+            class="admin-sidebar__link {{#if (eq ../filters.category this.value)}}is-active{{/if}}"
+            href="/admin/books?category={{urlEncode this.value}}"
+          >
+            <span>{{this.name}}</span>
+            <span class="admin-sidebar__count">{{this.total}}</span>
+          </a>
+        {{/each}}
+      </div>
+
+      <div class="admin-sidebar__section">
+        <h3>Trạng thái</h3>
+        {{#each statusOptions}}
+          <a
+            class="admin-sidebar__link {{#if (eq ../filters.status this.value)}}is-active{{/if}}"
+            href="/admin/books?status={{this.value}}"
+          >
+            <span>{{this.label}}</span>
+          </a>
+        {{/each}}
+      </div>
+
+      <div class="admin-sidebar__section">
+        <h3>Hành động</h3>
+        <a class="admin-sidebar__button" href="/admin/books/new">+ Tạo sách mới</a>
+      </div>
+    </aside>
+
+    <div class="admin-main">
+      <section class="admin-filters-card">
+        <form class="admin-filters" action="/admin/books" method="get">
+          <label class="admin-filters__field">
+            <span>Tìm kiếm</span>
+            <input type="text" name="q" value="{{filters.q}}" placeholder="Tên sách, tác giả, slug..." />
+          </label>
+          <label class="admin-filters__field">
+            <span>Danh mục</span>
+            <select name="category">
+              <option value="all">Tất cả danh mục</option>
+              {{#each categories}}
+                <option value="{{this.value}}" {{#if (eq ../filters.category this.value)}}selected{{/if}}>
+                  {{this.name}} ({{this.total}})
+                </option>
+              {{/each}}
+            </select>
+          </label>
+          <label class="admin-filters__field">
+            <span>Trạng thái</span>
+            <select name="status">
+              {{#each statusOptions}}
+                <option value="{{this.value}}" {{#if (eq ../filters.status this.value)}}selected{{/if}}>
+                  {{this.label}}
+                </option>
+              {{/each}}
+            </select>
+          </label>
+          <div class="admin-filters__actions">
+            <button type="submit" class="btn btn--primary">Áp dụng</button>
+            <a href="/admin/books" class="btn btn--text">Xóa lọc</a>
+          </div>
+        </form>
+      </section>
+
+      <section class="admin-summary-grid">
+        <article class="summary-card">
+          <p>Tổng số sách</p>
+          <strong>{{stats.totalBooks}}</strong>
+        </article>
+        <article class="summary-card">
+          <p>Tổng tồn kho</p>
+          <strong>{{stats.totalStock}}</strong>
+        </article>
+        <article class="summary-card">
+          <p>Đang hiển thị</p>
+          <strong>{{stats.activeCount}}</strong>
+        </article>
+        <article class="summary-card">
+          <p>Flash sale</p>
+          <strong>{{stats.flashSaleCount}}</strong>
+        </article>
+      </section>
+
+      <section class="admin-stats-extra">
+        <div class="admin-stats-extra__card">
+          <p>Doanh thu ước tính</p>
+          <strong>{{formatPrice stats.totalRevenue}}</strong>
+        </div>
+        <div class="admin-stats-extra__card">
+          <p>Sách thiếu kho (&lt; 10)</p>
+          <strong>{{stats.lowStockCount}}</strong>
+        </div>
+        <div class="admin-stats-extra__card">
+          <p>Sách nổi bật</p>
+          <strong>{{stats.highlightCount}}</strong>
+        </div>
+      </section>
+
+      {{#if recentBooks.length}}
+        <section class="admin-recent-card">
+          <header class="admin-recent-card__header">
+            <div>
+              <p class="admin-recent-card__eyebrow">Hoạt động</p>
+              <h2>Cập nhật gần nhất</h2>
+            </div>
+            <p class="admin-recent-card__note">Cập nhật {{recentBooks.length}} sách mới nhất</p>
+          </header>
+          <div class="admin-recent-list">
+            {{#each recentBooks}}
+              <article class="admin-recent-item">
+                <div>
+                  <p class="admin-recent-item__title">{{title}}</p>
+                  <p class="admin-recent-item__meta">
+                    {{updatedAtLabel}} · <span class="badge badge--muted">{{statusTag}}</span>
+                  </p>
+                </div>
+                <div class="admin-recent-item__stats">
+                  <p class="admin-recent-item__price">{{formatPrice price}}</p>
+                  <p class="admin-recent-item__stock">{{stock}} trong kho</p>
+                </div>
+              </article>
+            {{/each}}
+          </div>
+        </section>
+      {{/if}}
+
+      {{#if message}}
+        <div class="admin-flash admin-flash--{{status}}">
+          {{message}}
+        </div>
+      {{/if}}
+
+      <section class="admin-table-card">
+        <div class="admin-table-card__header">
+          <h2>Danh sách sách</h2>
+          <p>{{filteredCount}} / {{stats.totalBooks}} kết quả</p>
+        </div>
+
+        <div class="admin-table-wrapper">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Ảnh</th>
+                <th>Tiêu đề</th>
+                <th>Tác giả</th>
+                <th>Thể loại</th>
+                <th>Giá bán</th>
+                <th>Kho</th>
+                <th>Trạng thái</th>
+                <th>Hành động</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{#if books.length}}
+                {{#each books}}
+                  <tr>
+                    <td>{{increment @index}}</td>
+                    <td>
+                      <div class="admin-table__thumb">
+                        {{#if coverImage}}
+                          <img src="{{coverImage}}" alt="{{title}}">
+                        {{else}}
+                          <img src="/img/image.png" alt="{{title}}">
+                        {{/if}}
+                      </div>
+                    </td>
+                    <td>
+                      <strong>{{title}}</strong>
+                      <p class="admin-table__info">slug: {{slug}}</p>
+                    </td>
+                    <td>{{author}}</td>
+                    <td>{{category}}</td>
+                    <td>{{formatPrice newPrice}}</td>
+                    <td>{{stock}}</td>
+                    <td>
+                      <span class="badge {{#if isActive}}badge--success{{else}}badge--muted{{/if}}">
+                        {{#if isActive}}Hiển thị{{else}}Ẩn{{/if}}
+                      </span>
+                      {{#if isFlashSale}}
+                        <span class="badge badge--flash">Flash sale</span>
+                      {{/if}}
+                    </td>
+                    <td class="admin-table__actions">
+                      <a class="btn btn--outline" href="/admin/books/{{_id}}/edit">Chỉnh sửa</a>
+                      <form
+                        action="/admin/books/{{_id}}/delete"
+                        method="post"
+                        class="admin-inline-form"
+                      >
+                        <button type="submit" class="btn btn--danger" data-confirm="Bạn có chắc chắn muốn xóa sách này?">
+                          Xóa
+                        </button>
+                      </form>
+                    </td>
+                  </tr>
+                {{/each}}
+              {{else}}
+                <tr>
+                  <td colspan="9" class="admin-table__empty">
+                    Chưa có sách nào trong kho. Hãy tạo mới để bắt đầu.
+                  </td>
+                </tr>
+              {{/if}}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>

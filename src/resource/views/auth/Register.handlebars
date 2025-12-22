@@ -1,0 +1,48 @@
+<section class="auth-page">
+  <div class="auth-card">
+    <div class="auth-card__header">
+      <p class="auth-card__eyebrow">Tham gia Fahasa</p>
+      <h1>Tạo tài khoản mới</h1>
+      <p>Đăng ký để lưu giỏ hàng, xem lịch sử và phần quyền admin nếu bạn có mã mở rộng.</p>
+    </div>
+
+    {{#if errors.length}}
+      <div class="auth-alert auth-alert--error">
+        <ul>
+          {{#each errors}}
+            <li>{{this}}</li>
+          {{/each}}
+        </ul>
+      </div>
+    {{/if}}
+
+    <form class="auth-form" action="/auth/register" method="post">
+      <input type="hidden" name="redirect" value="{{redirect}}" />
+      <label class="auth-form__field">
+        <span>Họ và tên</span>
+        <input type="text" name="fullName" value="{{fullName}}" placeholder="Nguyễn Văn A" required />
+      </label>
+      <label class="auth-form__field">
+        <span>Email</span>
+        <input type="email" name="email" value="{{email}}" placeholder="tên@domain.com" required />
+      </label>
+      <label class="auth-form__field">
+        <span>Mật khẩu</span>
+        <input type="password" name="password" placeholder="Ít nhất 6 ký tự" required />
+      </label>
+      <label class="auth-form__field">
+        <span>Nhập lại mật khẩu</span>
+        <input type="password" name="confirmPassword" placeholder="Xác nhận mật khẩu" required />
+      </label>
+      <label class="auth-form__field">
+        <span>Mã quyền admin (nếu có)</span>
+        <input type="text" name="adminCode" value="{{adminCode}}" placeholder="Nhập mã mở rộng" />
+      </label>
+      <button type="submit" class="btn btn--primary auth-form__submit">Đăng ký</button>
+    </form>
+
+    <p class="auth-card__secondary">
+      Đã có tài khoản? <a href="/auth/login">Đăng nhập</a>
+    </p>
+  </div>
+</section>

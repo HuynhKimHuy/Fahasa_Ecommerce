@@ -13,24 +13,24 @@
       {{!-- img --}}
       <div class="collection-detail__media">
         <img src="{{book.coverImage}}" alt="{{book.title}}">
-        <div class="collection-detail__btn">
           <div class="collection-detail__cta">
             {{!-- số lượng bán  --}}
             {{!-- <div class="collection-detail__sold">
               Đã bán: <strong>{{book.sold}}</strong>
             </div> --}}
             <form class="collection-detail__cart" action="/cart/add/{{book._id}}" method="post">
-              <button type="submit" name="action" value="add" class="collection-detail__cart-btn collection-detail__cart-btn--outline">
+              <button type="submit" name="action" value="add" class="collection-detail__cart-btn btn-red">
                 <i class="fa-solid fa-cart-shopping"></i>
                 Thêm vào giỏ hàng
               </button>
-              <button type="submit" name="action" value="buy" class="collection-detail__cart-btn collection-detail__cart-btn--solid">
+              <button type="submit" name="action" value="buy" class="collection-detail__cart-btn btn-red">
                 Mua ngay
               </button>
+              <div></div>
             </form>
             {{!-- <a href="/collection" class="btn btn--ghost">Xem thêm bộ sưu tập</a> --}}
           </div>
-        </div>
+
       </div>
 
       <div class="collection-detail__info">

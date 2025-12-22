@@ -4,37 +4,60 @@
   </div>
   <div class="container">
     <nav class="navbar">
-      {{!-- navlogo --}}
-      <a href="/" class="nav_logo">
-        <img src="/img/image.png" alt="">
-      </a>
-      <a href="" class="icon_menu">
-        <i class="fa-solid fa-list"></i>
-      </a>
+      <div class="navbar__left">
+        {{!-- navlogo --}}
+        <a href="/" class="nav_logo">
+          <img src="/img/image.png" alt="">
+        </a>
+        <button type="button" class="nav_menu" aria-label="Mở danh mục">
+          <i class="fa-solid fa-list"></i>
+          <span>Danh mục</span>
+        </button>
+      </div>
 
-      <form action="/search" class="header-search">
+      <form action="/search" class="header-search navbar__search">
         <input type="text" name="q" placeholder="Bạn muốn mua gì " class="header-search__input" />
         <button type="submit" class="header-search__btn">
           <i class="fa-solid fa-magnifying-glass"></i>
         </button>
       </form>
 
-      <div class="nav_cta">
-        <a href="" class="arlet">
+      <div class="nav-actions">
+        <a href="#" class="nav-action">
           <i class="fa-regular fa-bell"></i>
           <span>Thông báo</span>
         </a>
 
-        <a href="/cart" class="shoping">
+        <a href="/cart" class="nav-action">
           <i class="fa-solid fa-bag-shopping"></i>
           <span>Giỏ Hàng</span>
         </a>
 
-        <a href="" class="auth">
-          <i class="fa-solid fa-user"></i>
-          <span>Đăng Nhập</span>
-        </a>
-
+        {{#if currentUser}}
+          <div class="nav-action nav-action--user">
+            <i class="fa-solid fa-user-check"></i>
+            <span>{{currentUser.fullName}}</span>
+          </div>
+          <a href="/auth/logout" class="nav-action nav-action--logout">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+            <span>Đăng xuất</span>
+          </a>
+          {{#if (isAdmin currentUser.role)}}
+            <a href="/admin/books" class="nav-action nav-action--admin">
+              <i class="fa-solid fa-shield"></i>
+              <span>Admin</span>
+            </a>
+          {{/if}}
+        {{else}}
+          <a href="/auth/login" class="nav-action">
+            <i class="fa-solid fa-user"></i>
+            <span>Đăng Nhập</span>
+          </a>
+          <a href="/auth/register" class="nav-action">
+            <i class="fa-solid fa-user-plus"></i>
+            <span>Đăng Ký</span>
+          </a>
+        {{/if}}
       </div>
 
     </nav>

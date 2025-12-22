@@ -11,6 +11,8 @@ import cartRouter from "./routes/Cart.Route.js"
 import HomeRoute from './routes/Home.Route.js';
 import CollectionRoute from './routes/Collection.Route.js';
 import CreateDBRoute from './routes/CreateDB.Route.js';
+import AdminRoute from './routes/Admin.Route.js';
+import AuthRoute from './routes/Auth.Route.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 import compression from 'compression';
@@ -38,6 +40,11 @@ app.use(
   })
 )
 
+app.use((req, res, next) => {
+  res.locals.currentUser = req.session.user ?? null;
+  next();
+});
+
 // chuyển số thành VNI có đấu chấm  
 const hbs = engine({
   helpers: {
@@ -50,6 +57,18 @@ const hbs = engine({
     urlEncode(value) {
       if (value === undefined || value === null) return "";
       return encodeURIComponent(value);
+    },
+    increment(value) {
+      const number = Number(value);
+      return Number.isNaN(number) ? value : number + 1;
+    },
+    eq(value, other) {
+      return String(value) === String(other);
+    },
+    isAdmin(role) {
+      return String(role ?? "")
+        .trim()
+        .toLowerCase() === "admin";
     },
   },
 });
@@ -68,6 +87,8 @@ const routeConfigs = [
   { path: '/collection', handler: CollectionRoute },
   { path: '/', handler: HomeRoute },
   { path: '/api/books', handler: CreateDBRoute },
+  { path: '/admin', handler: AdminRoute },
+  { path: '/auth', handler: AuthRoute },
 ]
 routeConfigs.forEach(({ path, handler }) => app.use(path, handler))
 

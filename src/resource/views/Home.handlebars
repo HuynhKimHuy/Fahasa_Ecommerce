@@ -124,28 +124,30 @@
               <img src="{{this.coverImage}}" alt="{{this.title}}" />
             </div>
 
-            <h3 class="flash-sale__name">
-              {{this.title}}
-            </h3>
+            <div class="flash-sale_item-body">
+              <h3 class="flash-sale__name">
+                {{this.title}}
+              </h3>
 
-            <div class="flash-sale__price-row">
-              <span class="flash-sale__price">{{formatPrice this.newPrice}}</span>
-              <span class="flash-sale__discount">-{{this.discountPercent}}%</span>
-            </div>
-
-            {{#if this.oldPrice}}
-            <div class="flash-sale__old-price">
-              {{formatPrice this.oldPrice}}
-            </div>
-            {{/if}}
-
-            <div class="flash-sale__sold">
-              <div class="flash-sale__sold-bar">
-                <span style="width: {{this.soldPercent}}%;"></span>
+              <div class="flash-sale__price-row">
+                <span class="flash-sale__price">{{formatPrice this.newPrice}}</span>
+                <span class="flash-sale__discount">-{{this.discountPercent}}%</span>
               </div>
-              <span class="flash-sale__sold-text">
-                Đã bán {{this.sold}}
-              </span>
+
+              {{#if this.oldPrice}}
+              <div class="flash-sale__old-price">
+                {{formatPrice this.oldPrice}}
+              </div>
+              {{/if}}
+
+              <div class="flash-sale__sold">
+                <div class="flash-sale__sold-bar">
+                  <span style="width: {{this.soldPercent}}%;"></span>
+                </div>
+                <span class="flash-sale__sold-text">
+                  Đã bán {{this.sold}}
+                </span>
+              </div>
             </div>
           </a>
         </article>
