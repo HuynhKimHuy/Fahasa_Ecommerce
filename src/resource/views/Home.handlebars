@@ -119,7 +119,7 @@
 
         {{#each saleBooks}}
         <article class="flash-sale__item">
-          <a class="flash-sale__item-link" href="/collection/{{this.slug}}">
+          <a class="flash-sale__item-link" href="/collection/{{#if this._id}}{{this._id}}{{else}}{{this.slug}}{{/if}}">
             <div class="flash-sale__thumb">
               <img src="{{this.coverImage}}" alt="{{this.title}}" />
             </div>
@@ -186,7 +186,7 @@
             <div class="category-slider__list" data-carousel-list>
               {{#each this.books}}
                 <article class="flash-sale__item category-slider__item">
-                  <a class="flash-sale__item-link" href="/collection/{{this.slug}}">
+                  <a class="flash-sale__item-link" href="/collection/{{#if this._id}}{{this._id}}{{else}}{{this.slug}}{{/if}}">
                     <div class="flash-sale__thumb">
                       <img src="{{this.coverImage}}" alt="{{this.title}}" loading="lazy" />
                     </div>
@@ -279,7 +279,7 @@
     <div class="home-books__grid">
       {{#each featuredBooks}}
       <article class="flash-sale__item home-books__card">
-        <a class="flash-sale__item-link" href="/collection/{{this.slug}}">
+        <a class="flash-sale__item-link" href="/collection/{{#if this._id}}{{this._id}}{{else}}{{this.slug}}{{/if}}">
           <div class="flash-sale__thumb">
             <img src="{{this.coverImage}}" alt="{{this.title}}" loading="lazy" />
           </div>
@@ -312,5 +312,3 @@
     {{/if}}
   </div>
 </section>
-
-

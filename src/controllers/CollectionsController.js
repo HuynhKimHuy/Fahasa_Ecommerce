@@ -1,4 +1,5 @@
 import Book from '../model/product.js';
+import mongoose from 'mongoose';
 import { normalizeBookPrices, normalizeBooksList } from '../helpers/book.helper.js';
 
 class CollectionsController {
@@ -38,7 +39,16 @@ class CollectionsController {
     async show(req, res, next) {
         try {
             const { slug } = req.params;
-            const bookRaw = await Book.findOne({ slug }).lean();
+            let bookRaw = null;
+
+            // Prefer lookup by ObjectId for uniqueness; fallback to slug
+            if (mongoose.Types.ObjectId.isValid(slug)) {
+                bookRaw = await Book.findById(slug).lean();
+            }
+
+            if (!bookRaw) {
+                bookRaw = await Book.findOne({ slug }).lean();
+            }
             const book = normalizeBookPrices(bookRaw);
             if (!book) {
                 return res.status(404).render('CollectionDetail', {

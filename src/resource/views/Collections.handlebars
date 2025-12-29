@@ -21,7 +21,7 @@
     <div class="collections__grid">
       {{#each books}}
       <article class="collections__card">
-        <a class="collections__card-link" href="/collection/{{this.slug}}">
+        <a class="collections__card-link" href="/collection/{{#if this._id}}{{this._id}}{{else}}{{this.slug}}{{/if}}">
           <div class="collections__card-thumb">
             <img src="{{this.coverImage}}" alt="{{this.title}}" />
           </div>

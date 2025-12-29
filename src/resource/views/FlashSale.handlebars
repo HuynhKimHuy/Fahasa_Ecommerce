@@ -12,7 +12,7 @@
       <div class="flash-sale-page__grid">
         {{#each saleBooks}}
           <article class="flash-sale__item">
-            <a class="flash-sale__item-link" href="/collection/{{this.slug}}">
+            <a class="flash-sale__item-link" href="/collection/{{#if this._id}}{{this._id}}{{else}}{{this.slug}}{{/if}}">
               <div class="flash-sale__thumb">
                 <img src="{{this.coverImage}}" alt="{{this.title}}" loading="lazy"/>
               </div>
