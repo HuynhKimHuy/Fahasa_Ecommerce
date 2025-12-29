@@ -1,0 +1,78 @@
+<section class="checkout-page">
+  <div class="container">
+    <div class="checkout__header">
+      <h1>Thanh toán</h1>
+      <p>Nhập thông tin người nhận và kiểm tra lại đơn hàng trước khi đặt.</p>
+    </div>
+
+    {{#if errors}}
+      <div class="alert alert--error">
+        {{#each errors}}
+          <p>{{this}}</p>
+        {{/each}}
+      </div>
+    {{/if}}
+
+    <div class="checkout__grid">
+      <form class="checkout__form card" action="/orders" method="post">
+        <h2>Thông tin người mua</h2>
+        <label>
+          <span>Họ và tên</span>
+          <input type="text" name="customerName" value="{{form.customerName}}" required>
+        </label>
+        <label>
+          <span>Email</span>
+          <input type="email" name="email" value="{{form.email}}" required>
+        </label>
+        <label>
+          <span>Số điện thoại</span>
+          <input type="tel" name="phone" value="{{form.phone}}" required>
+        </label>
+        <label>
+          <span>Địa chỉ nhận hàng</span>
+          <input type="text" name="address" value="{{form.address}}" required>
+        </label>
+        <label>
+          <span>Ghi chú</span>
+          <textarea name="note" rows="3">{{form.note}}</textarea>
+        </label>
+
+        <fieldset class="checkout__payment">
+          <legend>Phương thức thanh toán</legend>
+          <label>
+            <input type="radio" name="paymentMethod" value="cod" {{#if (eq form.paymentMethod "cod")}}checked{{/if}}>
+            Thanh toán khi nhận hàng (COD)
+          </label>
+          <label>
+            <input type="radio" name="paymentMethod" value="card" {{#if (eq form.paymentMethod "card")}}checked{{/if}}>
+            Thanh toán qua thẻ (đang hỗ trợ)
+          </label>
+        </fieldset>
+
+        <button type="submit" class="btn btn--primary checkout__submit">Đặt hàng</button>
+      </form>
+
+      <aside class="checkout__summary card">
+        <h2>Đơn hàng của bạn</h2>
+        <div class="checkout__items">
+          {{#each cart.items}}
+            <div class="checkout__item">
+              <div class="checkout__thumb">
+                <img src="{{this.product.coverImage}}" alt="{{this.product.title}}">
+              </div>
+              <div class="checkout__item-info">
+                <p class="checkout__item-title">{{this.product.title}}</p>
+                <p class="checkout__item-meta">{{this.qty}} x {{formatPrice this.price}}</p>
+              </div>
+              <div class="checkout__item-total">{{formatPrice this.totalItemPrice}}</div>
+            </div>
+          {{/each}}
+        </div>
+        <div class="checkout__total">
+          <span>Tổng cộng</span>
+          <strong>{{formatPrice cart.totalPrice}}</strong>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>

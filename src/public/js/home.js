@@ -63,4 +63,33 @@ document.addEventListener("DOMContentLoaded", () => {
 
   flashSalePrev?.addEventListener("click", () => scrollFlashSale(-1));
   flashSaleNext?.addEventListener("click", () => scrollFlashSale(1));
+
+  const setupNavDropdown = () => {
+    const wrapper = document.querySelector("[data-nav-menu]");
+    const toggle = wrapper?.querySelector("[data-nav-toggle]");
+    const dropdown = wrapper?.querySelector("[data-nav-dropdown]");
+    if (!wrapper || !toggle || !dropdown) return;
+
+    const close = () => wrapper.classList.remove("is-open");
+    const open = () => wrapper.classList.add("is-open");
+
+    toggle.addEventListener("click", (event) => {
+      event.preventDefault();
+      wrapper.classList.toggle("is-open");
+    });
+
+    document.addEventListener("click", (event) => {
+      if (!wrapper.contains(event.target)) {
+        close();
+      }
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        close();
+      }
+    });
+  };
+
+  setupNavDropdown();
 });

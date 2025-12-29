@@ -1,8 +1,20 @@
 <section class="collections">
   <div class="container">
     <div class="collections__header">
-      <h1>Bộ sưu tập nổi bật</h1>
-      <p class="collections__subtitle">Tổng {{books.length}} đầu sách đang được bán chạy nhất.</p>
+      <h1>
+        {{#if searchQuery}}
+          Kết quả cho "{{searchQuery}}"
+        {{else}}
+          Bộ sưu tập nổi bật
+        {{/if}}
+      </h1>
+      <p class="collections__subtitle">
+        {{#if searchQuery}}
+          Tìm thấy {{books.length}} đầu sách phù hợp.
+        {{else}}
+          Tổng {{books.length}} đầu sách đang được bán chạy nhất.
+        {{/if}}
+      </p>
     </div>
     
     {{#if books.length}}

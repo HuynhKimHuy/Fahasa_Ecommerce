@@ -5,11 +5,22 @@ class CollectionsController {
     async index(req, res, next) {
     try {
       const { category } = req.query
+      const keywordRaw = typeof req.query.q === "string" ? req.query.q : "";
+      const keyword = keywordRaw.trim();
 
-      const filter = {}
-      if (category) filter.category = category
-        console.log(filter)
-      const booksRaw = await Book.find(filter).lean()
+      const andFilters = [];
+      if (category) {
+        andFilters.push({ category });
+      }
+      if (keyword) {
+        const regex = new RegExp(keyword, "i");
+        andFilters.push({
+          $or: [{ title: regex }, { author: regex }, { slug: regex }],
+        });
+      }
+
+      const mongoFilter = andFilters.length ? { $and: andFilters } : {};
+      const booksRaw = await Book.find(mongoFilter).lean()
       const books = normalizeBooksList(booksRaw)
 
       const categories = await Book.distinct('category')
@@ -17,6 +28,7 @@ class CollectionsController {
         books,
         categories,
         activeCategory: category || 'all',
+        searchQuery: keyword,
       })
     } catch (error) {
       console.error('Unable to fetch collections', error)

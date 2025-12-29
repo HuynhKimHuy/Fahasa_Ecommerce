@@ -1,0 +1,240 @@
+<div class="admin-page">
+  <header class="admin-hero">
+    <div>
+      <p class="admin-hero__eyebrow">Quản trị hệ thống</p>
+      <h1>Quản lý đơn hàng</h1>
+      <p class="admin-hero__description">
+        Theo dõi đơn mới, trạng thái giao hàng, và thông tin đặt hàng ngay khi khách tạo đơn.
+      </p>
+    </div>
+  </header>
+
+  <div class="admin-layout">
+    <aside class="admin-sidebar admin-sidebar--compact" data-sidebar-accordion>
+      <div class="admin-sidebar__top">
+        <button
+          type="button"
+          class="admin-sidebar__chip {{#if (eq navActive "books")}}is-active{{/if}}"
+          data-accordion-open="books"
+        >
+          <i class="fa-solid fa-book" aria-hidden="true"></i> Books
+        </button>
+        <button
+          type="button"
+          class="admin-sidebar__chip {{#if (eq navActive "orders")}}is-active{{/if}}"
+          data-accordion-open="orders"
+        >
+          <i class="fa-solid fa-receipt" aria-hidden="true"></i> Orders
+        </button>
+        <button
+          type="button"
+          class="admin-sidebar__chip {{#if (eq navActive "users")}}is-active{{/if}}"
+          data-accordion-open="users"
+        >
+          <i class="fa-solid fa-users" aria-hidden="true"></i> Users
+        </button>
+      </div>
+
+      <div
+        class="admin-sidebar__section {{#if (eq navActive "books")}}is-open{{/if}}"
+        data-accordion-section="books"
+      >
+        <button type="button" class="admin-sidebar__section-header" data-accordion-toggle>
+          <span>Books Management</span>
+          <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+        </button>
+        <div class="admin-sidebar__section-body">
+          <a class="admin-sidebar__link" href="/admin/books">
+            <span class="admin-sidebar__link-left">
+              <i class="fa-solid fa-book admin-sidebar__icon" aria-hidden="true"></i>
+              <span>Tất cả sách</span>
+            </span>
+          </a>
+          <a class="admin-sidebar__link" href="/admin/books/new">
+            <span class="admin-sidebar__link-left">
+              <i class="fa-solid fa-plus admin-sidebar__icon" aria-hidden="true"></i>
+              <span>Thêm sách mới</span>
+            </span>
+          </a>
+        </div>
+      </div>
+      <div
+        class="admin-sidebar__section {{#if (eq navActive "orders")}}is-open{{/if}}"
+        data-accordion-section="orders"
+      >
+        <button type="button" class="admin-sidebar__section-header" data-accordion-toggle>
+          <span>Orders Management</span>
+          <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+        </button>
+        <div class="admin-sidebar__section-body">
+          <a class="admin-sidebar__link {{#if (eq navActive "orders")}}is-active{{/if}}" href="/admin/orders">
+            <span class="admin-sidebar__link-left">
+              <i class="fa-solid fa-receipt admin-sidebar__icon" aria-hidden="true"></i>
+              <span>Danh sách đơn</span>
+            </span>
+            <span class="admin-sidebar__count">{{orderStats.total}}</span>
+          </a>
+          <p class="admin-sidebar__subheading">Theo trạng thái</p>
+          <a class="admin-sidebar__link" href="/admin/orders">
+            <span class="admin-sidebar__link-left">
+              <i class="fa-solid fa-bell admin-sidebar__icon" aria-hidden="true"></i>
+              <span>Đơn mới</span>
+            </span>
+            <span class="admin-sidebar__count">{{orderStats.newOrders}}</span>
+          </a>
+          <a class="admin-sidebar__link" href="/admin/orders">
+            <span class="admin-sidebar__link-left">
+              <i class="fa-solid fa-truck-fast admin-sidebar__icon" aria-hidden="true"></i>
+              <span>Đang giao</span>
+            </span>
+            <span class="admin-sidebar__count">{{orderStats.shipping}}</span>
+          </a>
+          <a class="admin-sidebar__link" href="/admin/orders">
+            <span class="admin-sidebar__link-left">
+              <i class="fa-solid fa-check admin-sidebar__icon" aria-hidden="true"></i>
+              <span>Đã giao</span>
+            </span>
+            <span class="admin-sidebar__count">{{orderStats.completed}}</span>
+          </a>
+        </div>
+      </div>
+      <div
+        class="admin-sidebar__section {{#if (eq navActive "users")}}is-open{{/if}}"
+        data-accordion-section="users"
+      >
+        <button type="button" class="admin-sidebar__section-header" data-accordion-toggle>
+          <span>Users Management</span>
+          <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+        </button>
+        <div class="admin-sidebar__section-body">
+          <a class="admin-sidebar__link" href="/admin/users">
+            <span class="admin-sidebar__link-left">
+              <i class="fa-solid fa-users admin-sidebar__icon" aria-hidden="true"></i>
+              <span>Danh sách người dùng</span>
+            </span>
+          </a>
+          <a class="admin-sidebar__link" href="/admin/users">
+            <span class="admin-sidebar__link-left">
+              <i class="fa-solid fa-user-shield admin-sidebar__icon" aria-hidden="true"></i>
+              <span>Phân quyền &amp; vai trò</span>
+            </span>
+          </a>
+        </div>
+      </div>
+    </aside>
+
+    <div class="admin-main">
+      <section class="admin-summary-grid">
+        <article class="summary-card">
+          <p>Tổng đơn</p>
+          <strong>{{orderStats.total}}</strong>
+        </article>
+        <article class="summary-card">
+          <p>Đơn mới</p>
+          <strong>{{orderStats.newOrders}}</strong>
+        </article>
+        <article class="summary-card">
+          <p>Đang giao</p>
+          <strong>{{orderStats.shipping}}</strong>
+        </article>
+        <article class="summary-card">
+          <p>Đã giao</p>
+          <strong>{{orderStats.completed}}</strong>
+        </article>
+      </section>
+
+      <section
+        class="admin-order-controls"
+        data-order-auto-refresh="true"
+        data-refresh-interval="20000"
+      >
+        <div class="admin-order-controls__left">
+          <p class="admin-order-meta">Cập nhật lúc {{lastUpdatedLabel}}</p>
+          <label class="admin-order-toggle">
+            <input type="checkbox" checked data-auto-refresh-toggle>
+            <span>Tự động tải mới (20s)</span>
+          </label>
+        </div>
+        <div class="admin-order-controls__actions">
+          <button type="button" class="btn btn--outline" data-order-refresh>Tải lại</button>
+        </div>
+      </section>
+
+      <section class="admin-order-list">
+        {{#if orders.length}}
+          {{#each orders}}
+            <article class="admin-order-card">
+              <header class="admin-order-card__header">
+                <div>
+                  <p class="admin-order-id">Mã đơn: {{this._id}}</p>
+                  <p class="admin-order-date">Đặt lúc {{this.createdAtLabel}}</p>
+                </div>
+                <div class="admin-order-card__badges">
+                  <span class="badge badge--{{this.statusTone}}">{{this.statusLabel}}</span>
+                  <span class="badge badge--{{this.deliveryTone}}">{{this.deliveryLabel}}</span>
+                  <span class="badge badge--muted">{{this.paymentMethodLabel}}</span>
+                </div>
+              </header>
+
+              <div class="admin-order-grid">
+                <div class="admin-order-block">
+                  <p class="admin-order-label">Khách hàng</p>
+                  <p class="admin-order-value">{{this.customerName}}</p>
+                  <p class="admin-order-meta">{{this.phone}} · {{this.email}}</p>
+                </div>
+                <div class="admin-order-block">
+                  <p class="admin-order-label">Địa chỉ giao</p>
+                  <p class="admin-order-value">{{this.address}}</p>
+                  {{#if this.note}}
+                    <p class="admin-order-meta">Ghi chú: {{this.note}}</p>
+                  {{/if}}
+                </div>
+                <div class="admin-order-block admin-order-total">
+                  <p class="admin-order-label">Tổng đơn</p>
+                  <p class="admin-order-price">{{formatPrice this.totalPrice}}</p>
+                  <p class="admin-order-meta">{{this.totalQty}} sản phẩm</p>
+                </div>
+              </div>
+
+              <div class="admin-order-items">
+                <p class="admin-order-label">Sản phẩm</p>
+                <div class="admin-order-items__list">
+                  {{#each this.items}}
+                    <div class="admin-order-item">
+                      <div>
+                        <p class="admin-order-item__title">{{this.title}}</p>
+                        <p class="admin-order-item__meta">{{this.qty}} x {{formatPrice this.price}}</p>
+                      </div>
+                      <p class="admin-order-item__price">{{formatPrice this.lineTotal}}</p>
+                    </div>
+                  {{/each}}
+                </div>
+              </div>
+
+              <div class="admin-order-actions">
+                <form class="admin-order-status" action="/admin/orders/{{this._id}}/status" method="post">
+                  <label for="status-{{this._id}}" class="admin-order-label">Trạng thái</label>
+                  <div class="admin-order-status__controls">
+                    <select name="status" id="status-{{this._id}}">
+                      <option value="pending" {{#if (eq this.status "pending")}}selected{{/if}}>Chờ xử lý</option>
+                      <option value="confirmed" {{#if (eq this.status "confirmed")}}selected{{/if}}>Đã xác nhận</option>
+                      <option value="shipping" {{#if (eq this.status "shipping")}}selected{{/if}}>Đang giao</option>
+                      <option value="completed" {{#if (eq this.status "completed")}}selected{{/if}}>Hoàn tất</option>
+                      <option value="canceled" {{#if (eq this.status "canceled")}}selected{{/if}}>Đã huỷ</option>
+                    </select>
+                    <button type="submit" class="btn btn--primary btn--small">Lưu</button>
+                  </div>
+                </form>
+                <form action="/admin/orders/{{this._id}}/delete" method="post" data-confirm="Xoá đơn hàng này?">
+                  <button type="submit" class="btn btn--text">Xoá</button>
+                </form>
+              </div>
+            </article>
+          {{/each}}
+        {{else}}
+          <p class="admin-table__empty">Chưa có đơn hàng.</p>
+        {{/if}}
+      </section>
+    </div>
+  </div>
+</div>

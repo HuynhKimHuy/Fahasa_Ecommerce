@@ -1,0 +1,164 @@
+<div class="admin-page">
+  <header class="admin-hero">
+    <div>
+      <p class="admin-hero__eyebrow">Quản trị hệ thống</p>
+      <h1>Quản lý người dùng</h1>
+      <p class="admin-hero__description">
+        Xem danh sách tài khoản đã đăng ký, vai trò, và trạng thái hoạt động.
+      </p>
+    </div>
+  </header>
+
+  <div class="admin-layout">
+    <aside class="admin-sidebar admin-sidebar--compact" data-sidebar-accordion>
+      <div class="admin-sidebar__top">
+        <button
+          type="button"
+          class="admin-sidebar__chip {{#if (eq navActive "books")}}is-active{{/if}}"
+          data-accordion-open="books"
+        >
+          <i class="fa-solid fa-book" aria-hidden="true"></i> Books
+        </button>
+        <button
+          type="button"
+          class="admin-sidebar__chip {{#if (eq navActive "orders")}}is-active{{/if}}"
+          data-accordion-open="orders"
+        >
+          <i class="fa-solid fa-receipt" aria-hidden="true"></i> Orders
+        </button>
+        <button
+          type="button"
+          class="admin-sidebar__chip {{#if (eq navActive "users")}}is-active{{/if}}"
+          data-accordion-open="users"
+        >
+          <i class="fa-solid fa-users" aria-hidden="true"></i> Users
+        </button>
+      </div>
+
+      <div
+        class="admin-sidebar__section {{#if (eq navActive "books")}}is-open{{/if}}"
+        data-accordion-section="books"
+      >
+        <button type="button" class="admin-sidebar__section-header" data-accordion-toggle>
+          <span>Books Management</span>
+          <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+        </button>
+        <div class="admin-sidebar__section-body">
+          <a class="admin-sidebar__link" href="/admin/books">
+            <span class="admin-sidebar__link-left">
+              <i class="fa-solid fa-book admin-sidebar__icon" aria-hidden="true"></i>
+              <span>Tất cả sách</span>
+            </span>
+          </a>
+          <a class="admin-sidebar__link" href="/admin/books/new">
+            <span class="admin-sidebar__link-left">
+              <i class="fa-solid fa-plus admin-sidebar__icon" aria-hidden="true"></i>
+              <span>Thêm sách mới</span>
+            </span>
+          </a>
+        </div>
+      </div>
+      <div
+        class="admin-sidebar__section {{#if (eq navActive "orders")}}is-open{{/if}}"
+        data-accordion-section="orders"
+      >
+        <button type="button" class="admin-sidebar__section-header" data-accordion-toggle>
+          <span>Orders Management</span>
+          <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+        </button>
+        <div class="admin-sidebar__section-body">
+          <a class="admin-sidebar__link" href="/admin/orders">
+            <span class="admin-sidebar__link-left">
+              <i class="fa-solid fa-receipt admin-sidebar__icon" aria-hidden="true"></i>
+              <span>Danh sách đơn</span>
+            </span>
+          </a>
+        </div>
+      </div>
+      <div
+        class="admin-sidebar__section {{#if (eq navActive "users")}}is-open{{/if}}"
+        data-accordion-section="users"
+      >
+        <button type="button" class="admin-sidebar__section-header" data-accordion-toggle>
+          <span>Users Management</span>
+          <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+        </button>
+        <div class="admin-sidebar__section-body">
+          <a class="admin-sidebar__link {{#if (eq navActive "users")}}is-active{{/if}}" href="/admin/users">
+            <span class="admin-sidebar__link-left">
+              <i class="fa-solid fa-users admin-sidebar__icon" aria-hidden="true"></i>
+              <span>Danh sách người dùng</span>
+            </span>
+            <span class="admin-sidebar__count">{{stats.total}}</span>
+          </a>
+        </div>
+      </div>
+    </aside>
+
+    <div class="admin-main">
+      <section class="admin-summary-grid">
+        <article class="summary-card">
+          <p>Tổng người dùng</p>
+          <strong>{{stats.total}}</strong>
+        </article>
+        <article class="summary-card">
+          <p>Admin</p>
+          <strong>{{stats.admins}}</strong>
+        </article>
+        <article class="summary-card">
+          <p>Khách</p>
+          <strong>{{stats.customers}}</strong>
+        </article>
+        <article class="summary-card">
+          <p>Hoạt động</p>
+          <strong>{{stats.active}}</strong>
+        </article>
+      </section>
+
+      <section class="admin-table-card">
+        <div class="admin-table-card__header">
+          <h2>Danh sách người dùng</h2>
+          <p>{{stats.total}} tài khoản</p>
+        </div>
+        <div class="admin-table-wrapper">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Họ tên</th>
+                <th>Email</th>
+                <th>Vai trò</th>
+                <th>Trạng thái</th>
+                <th>Ngày tạo</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{#if users.length}}
+                {{#each users}}
+                  <tr>
+                    <td>{{increment @index}}</td>
+                    <td>{{fullName}}</td>
+                    <td>{{email}}</td>
+                    <td>
+                      <span class="badge {{#if (eq role "admin")}}badge--info{{else}}badge--muted{{/if}}">
+                        {{roleLabel}}
+                      </span>
+                    </td>
+                    <td>
+                      <span class="badge badge--{{statusTone}}">{{statusLabel}}</span>
+                    </td>
+                    <td>{{createdAtLabel}}</td>
+                  </tr>
+                {{/each}}
+              {{else}}
+                <tr>
+                  <td colspan="6" class="admin-table__empty">Chưa có người dùng.</td>
+                </tr>
+              {{/if}}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>

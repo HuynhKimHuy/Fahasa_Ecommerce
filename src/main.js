@@ -13,6 +13,7 @@ import CollectionRoute from './routes/Collection.Route.js';
 import CreateDBRoute from './routes/CreateDB.Route.js';
 import AdminRoute from './routes/Admin.Route.js';
 import AuthRoute from './routes/Auth.Route.js';
+import OrderRoute from "./routes/Order.Route.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 import compression from 'compression';
@@ -42,6 +43,7 @@ app.use(
 
 app.use((req, res, next) => {
   res.locals.currentUser = req.session.user ?? null;
+  res.locals.searchQuery = typeof req.query.q === "string" ? req.query.q : "";
   next();
 });
 
@@ -82,8 +84,17 @@ app.use(express.static(path.join(__dirname, 'public')))
 // ensure standalone JS assets are reachable even if current route adds prefixes
 app.use('/js', express.static(path.join(__dirname, 'public/js')))
 
+app.get("/search", (req, res) => {
+  const q = typeof req.query.q === "string" ? req.query.q.trim() : "";
+  if (!q) {
+    return res.redirect("/collection");
+  }
+  return res.redirect(`/collection?q=${encodeURIComponent(q)}`);
+});
+
 const routeConfigs = [
   { path: '/cart', handler: cartRouter },
+  { path: '/orders', handler: OrderRoute },
   { path: '/collection', handler: CollectionRoute },
   { path: '/', handler: HomeRoute },
   { path: '/api/books', handler: CreateDBRoute },

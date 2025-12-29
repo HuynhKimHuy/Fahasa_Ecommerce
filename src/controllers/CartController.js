@@ -15,8 +15,9 @@ export const addToCart = async (req, res) => {
       return res.redirect("back")
     }
 
-    const { qty } = req.body
-    const quantity = Number(qty) > 0 ? Number(qty) : 1
+    const { qty, quantity: quantityField } = req.body
+    const rawQty = qty ?? quantityField
+    const quantity = Number(rawQty) > 0 ? Number(rawQty) : 1
     const cart = getCartFromSession(req)
 
     cart.add(book, bookId, quantity)

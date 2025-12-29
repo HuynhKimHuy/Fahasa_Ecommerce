@@ -1,60 +1,119 @@
 <section class="collection-detail">
   <div class="container">
     {{#if notFound}}
-    <div class="collection-detail__empty">
-      <h1>Không tìm thấy sản phẩm</h1>
-      <p>Không có sách nào có slug <strong>{{slug}}</strong>.</p>
-      <a href="/collection" class="btn btn--primary">Quay lại bộ sưu tập</a>
-    </div>
+      <div class="collection-detail__empty">
+        <h1>Không tìm thấy sản phẩm</h1>
+        <p>Không có sách nào có slug <strong>{{slug}}</strong>.</p>
+        <a href="/collection" class="btn btn--primary">Quay lại bộ sưu tập</a>
+      </div>
     {{else}}
+      <div class="breadcrumb">
+        <a href="/">Trang chủ</a>
+        <span>/</span>
+        <a href="/collection">Bộ sưu tập</a>
+        <span>/</span>
+        <span>{{book.title}}</span>
+      </div>
 
-    {{!-- render ra sản phảm --}}
-    <div class="collection-detail__inner">
-      {{!-- img --}}
-      <div class="collection-detail__media">
-        <img src="{{book.coverImage}}" alt="{{book.title}}">
-          <div class="collection-detail__cta">
-            {{!-- số lượng bán  --}}
-            {{!-- <div class="collection-detail__sold">
-              Đã bán: <strong>{{book.sold}}</strong>
-            </div> --}}
-            <form class="collection-detail__cart" action="/cart/add/{{book._id}}" method="post">
-              <button type="submit" name="action" value="add" class="collection-detail__cart-btn btn-red">
-                <i class="fa-solid fa-cart-shopping"></i>
-                Thêm vào giỏ hàng
-              </button>
-              <button type="submit" name="action" value="buy" class="collection-detail__cart-btn btn-red">
-                Mua ngay
-              </button>
-              <div></div>
-            </form>
-            {{!-- <a href="/collection" class="btn btn--ghost">Xem thêm bộ sưu tập</a> --}}
+      <div class="collection-detail__inner">
+        <div class="collection-detail__left">
+          <div class="collection-detail__media-card">
+            <img src="{{book.coverImage}}" alt="{{book.title}}">
+            
           </div>
 
-      </div>
-
-      <div class="collection-detail__info">
-        <p class="collection-detail__tag">{{book.category}}</p>
-        <h1>{{book.title}}</h1>
-        <p class="collection-detail__author">Tác giả: {{book.author}}</p>
-        <p class="collection-detail__description">{{book.description}}</p>
-        <div class="collection-detail__price-row">
-          <span class="collection-detail__price">{{formatPrice book.newPrice}}</span>
-          {{#if book.discountPercent}}
-          <span class="collection-detail__discount">-{{book.discountPercent}}%</span>
-          <span class="collection-detail__old-price">{{formatPrice book.oldPrice}}</span>
-          {{/if}}
+          <div class="collection-detail__policies">
+            <h3>Chính sách ưu đãi Fahasa</h3>
+            <ul>
+              <li><i class="fa-solid fa-check"></i> Thời gian giao hàng nhanh ở TP.HCM</li>
+              <li><i class="fa-solid fa-check"></i> Giao toàn quốc, đổi trả khi có lỗi</li>
+              <li><i class="fa-solid fa-check"></i> Hỗ trợ đổi trả 7 ngày</li>
+            </ul>
+          </div>
         </div>
-        <p class="collection-detail__long">{{book.longDescription}}</p>
-        <ul class="collection-detail__meta">
-          <li>Nhà xuất bản: {{book.publisher}}</li>
-          <li>Năm xuất bản: {{book.publishYear}}</li>
-          <li>Trang: {{book.size}}</li>
-          <li>Loại bìa: {{book.coverType}}</li>
-        </ul>
 
+        <div class="collection-detail__right">
+          <header class="collection-detail__header">
+            <h1>{{book.title}}</h1>
+            <p class="collection-detail__meta-line">
+              <span>Tác giả: <strong>{{book.author}}</strong></span>
+              {{#if book.publisher}}
+                <span>Nhà XB: <strong>{{book.publisher}}</strong></span>
+              {{/if}}
+            </p>
+            <p class="collection-detail__category">Danh mục: {{book.category}}</p>
+          </header>
+
+          <div class="collection-detail__price-card">
+            <div class="collection-detail__price-main">
+              <span class="price">{{formatPrice book.newPrice}}</span>
+              {{#if book.discountPercent}}
+                <span class="discount">-{{book.discountPercent}}%</span>
+              {{/if}}
+            </div>
+            {{#if book.oldPrice}}
+              <div class="collection-detail__price-old">{{formatPrice book.oldPrice}}</div>
+            {{/if}}
+            <div class="collection-detail__stock">
+              {{#if book.stock}}
+                Còn lại: <strong>{{book.stock}}</strong> | Đã bán: <strong>{{book.sold}}</strong>
+              {{else}}
+                Hết hàng
+              {{/if}}
+            </div>
+          </div>
+
+          <div class="collection-detail__actions">
+            <form class="collection-detail__cart" action="/cart/add/{{book._id}}" method="post">
+              <label class="quantity">
+                Số lượng
+                <input type="number" name="quantity" min="1" value="1">
+              </label>
+              <div class="action-buttons">
+                <button type="submit" name="action" value="add" class="btn btn--outline">
+                  <i class="fa-solid fa-cart-shopping"></i>
+                  Thêm vào giỏ hàng
+                </button>
+                <button type="submit" name="action" value="buy" class="btn btn--primary">
+                  Mua ngay
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <div class="collection-detail__shipping">
+            <h3>Thông tin vận chuyển</h3>
+            <ul>
+              <li>Giao hàng nhanh nội thành</li>
+              <li>Đồng kiểm khi nhận</li>
+              <li>Miễn phí đơn từ 300.000đ (tuỳ khu vực)</li>
+            </ul>
+          </div>
+
+          <div class="collection-detail__specs">
+            <h3>Thông tin chi tiết</h3>
+            <div class="specs-grid">
+              <div><span>Mã hàng</span><strong>{{book._id}}</strong></div>
+              <div><span>Thể loại</span><strong>{{book.category}}</strong></div>
+              <div><span>Năm XB</span><strong>{{book.publishYear}}</strong></div>
+              <div><span>Tác giả</span><strong>{{book.author}}</strong></div>
+              <div><span>Loại bìa</span><strong>{{book.coverType}}</strong></div>
+              <div><span>Kích thước</span><strong>{{book.size}}</strong></div>
+            </div>
+          </div>
+
+          <div class="collection-detail__description">
+            <h3>Mô tả sản phẩm</h3>
+            <div class="description__content">
+              {{#if book.longDescription}}
+                {{{book.longDescription}}}
+              {{else}}
+                <p>{{book.description}}</p>
+              {{/if}}
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
     {{/if}}
   </div>
 </section>

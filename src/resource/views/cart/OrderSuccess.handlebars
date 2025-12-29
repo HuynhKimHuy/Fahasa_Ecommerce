@@ -1,0 +1,19 @@
+<section class="order-success">
+  <div class="container">
+    <div class="order-success__card">
+      <div class="order-success__icon">✅</div>
+      <h1>Đặt hàng thành công</h1>
+      <p>Mã đơn: <strong>{{order._id}}</strong></p>
+      <p>Chúng tôi sẽ liên hệ xác nhận và giao hàng sớm nhất.</p>
+
+      <div class="order-success__summary">
+        <div><span>Khách hàng</span><strong>{{order.customerName}}</strong></div>
+        <div><span>Số điện thoại</span><strong>{{order.phone}}</strong></div>
+        <div><span>Địa chỉ</span><strong>{{order.address}}</strong></div>
+        <div><span>Tổng tiền</span><strong>{{formatPrice order.totalPrice}}</strong></div>
+      </div>
+
+      <a href="/collection" class="btn btn--primary">Tiếp tục mua sắm</a>
+    </div>
+  </div>
+</section>

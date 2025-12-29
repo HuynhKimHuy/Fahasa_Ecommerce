@@ -9,14 +9,34 @@
         <a href="/" class="nav_logo">
           <img src="/img/image.png" alt="">
         </a>
-        <button type="button" class="nav_menu" aria-label="Mở danh mục">
-          <i class="fa-solid fa-list"></i>
-          <span>Danh mục</span>
-        </button>
+        <div class="nav_menu-wrapper" data-nav-menu>
+          <button type="button" class="nav_menu" aria-label="Mở danh mục" data-nav-toggle>
+            <i class="fa-solid fa-list"></i>
+            <span>Danh mục</span>
+          </button>
+          <div class="nav_dropdown" data-nav-dropdown>
+            {{#if categories.length}}
+              <div class="nav_dropdown__list">
+                {{#each categories}}
+                  <a class="nav_dropdown__item" href="/collection?category={{urlEncode this.name}}">
+                    <span class="nav_dropdown__dot"></span>
+                    <span class="nav_dropdown__label">{{this.name}}</span>
+                  </a>
+                {{/each}}
+                <a class="nav_dropdown__item nav_dropdown__item--all" href="/collection">
+                  <span class="nav_dropdown__label">Xem tất cả</span>
+                  <span aria-hidden="true">→</span>
+                </a>
+              </div>
+            {{else}}
+              <p class="nav_dropdown__empty">Chưa có danh mục.</p>
+            {{/if}}
+          </div>
+        </div>
       </div>
 
       <form action="/search" class="header-search navbar__search">
-        <input type="text" name="q" placeholder="Bạn muốn mua gì " class="header-search__input" />
+        <input type="text" name="q" placeholder="Bạn muốn mua gì " class="header-search__input" value="{{searchQuery}}" />
         <button type="submit" class="header-search__btn">
           <i class="fa-solid fa-magnifying-glass"></i>
         </button>

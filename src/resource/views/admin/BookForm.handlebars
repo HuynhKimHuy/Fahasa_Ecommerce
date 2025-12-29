@@ -23,7 +23,22 @@
 
           <label>
             <span>Thể loại</span>
-            <input type="text" name="category" value="{{book.category}}" required />
+            <input
+              type="text"
+              name="category"
+              value="{{book.category}}"
+              list="category-options"
+              placeholder="Chọn hoặc nhập danh mục"
+              required
+            />
+            <datalist id="category-options">
+              {{#if categories.length}}
+                {{#each categories}}
+                  <option value="{{this}}">{{this}}</option>
+                {{/each}}
+              {{/if}}
+            </datalist>
+            <small>Chọn danh mục có sẵn hoặc nhập để thêm danh mục mới.</small>
           </label>
 
           <label>

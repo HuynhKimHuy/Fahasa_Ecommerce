@@ -1,4 +1,5 @@
 import Book from "../model/product.js";
+import Order from "../model/order.js";
 import { normalizeBooksList } from "../helpers/book.helper.js";
 
 const createSlug = (value = "") =>
@@ -132,6 +133,16 @@ const toBoolean = (value, fallback = false) => {
 };
 
 class AdminController {
+  constructor() {
+    this.list = this.list.bind(this);
+    this.showCreateForm = this.showCreateForm.bind(this);
+    this.create = this.create.bind(this);
+    this.showEditForm = this.showEditForm.bind(this);
+    this.update = this.update.bind(this);
+    this.delete = this.delete.bind(this);
+    this.buildPayload = this.buildPayload.bind(this);
+  }
+
   async list(req, res, next) {
     try {
       const selectedCategory =
@@ -159,7 +170,7 @@ class AdminController {
       }
       const filters = andFilters.length ? { $and: andFilters } : {};
 
-      const [allBooksRaw, filteredBooksRaw, categoriesRaw] = await Promise.all([
+      const [allBooksRaw, filteredBooksRaw, categoriesRaw, ordersRaw] = await Promise.all([
         Book.find().lean().sort({ createdAt: -1 }),
         Book.find(filters).lean().sort({ createdAt: -1 }),
         Book.aggregate([
@@ -174,12 +185,49 @@ class AdminController {
           },
           { $sort: { _id: 1 } },
         ]),
+        Order.find().lean().sort({ createdAt: -1 }).limit(10),
       ]);
 
       const allBooks = normalizeBooksList(allBooksRaw);
       const books = normalizeBooksList(filteredBooksRaw);
       const stats = buildStats(allBooks);
       const recentBooks = buildRecentBooks(books);
+      const statusMap = {
+        pending: { label: "Đơn mới", tone: "warning", deliveryLabel: "Chưa giao", deliveryTone: "warning" },
+        confirmed: { label: "Đã xác nhận", tone: "info", deliveryLabel: "Chưa giao", deliveryTone: "warning" },
+        shipping: { label: "Đang giao", tone: "info", deliveryLabel: "Đang giao", deliveryTone: "info" },
+        completed: { label: "Hoàn tất", tone: "success", deliveryLabel: "Đã giao", deliveryTone: "success" },
+        canceled: { label: "Đã huỷ", tone: "danger", deliveryLabel: "Huỷ", deliveryTone: "danger" },
+      };
+      const orders = (ordersRaw ?? []).map((order) => {
+        const statusInfo = statusMap[order.status] ?? statusMap.pending;
+        return {
+          ...order,
+          createdAtLabel: order.createdAt
+            ? new Date(order.createdAt).toLocaleString("vi-VN", { hour12: false })
+            : "",
+          statusLabel: statusInfo.label,
+          statusTone: statusInfo.tone,
+          deliveryLabel: statusInfo.deliveryLabel,
+          deliveryTone: statusInfo.deliveryTone,
+          paymentMethodLabel: order.paymentMethod === "card" ? "Thanh toán online" : "COD",
+        };
+      });
+      const orderStats = orders.reduce(
+        (acc, order) => {
+          acc.total += 1;
+          acc.pending += order.status === "pending" ? 1 : 0;
+          acc.confirmed += order.status === "confirmed" ? 1 : 0;
+          acc.shipping += order.status === "shipping" ? 1 : 0;
+          acc.completed += order.status === "completed" ? 1 : 0;
+          acc.canceled += order.status === "canceled" ? 1 : 0;
+          return acc;
+        },
+        { total: 0, pending: 0, confirmed: 0, shipping: 0, completed: 0, canceled: 0 }
+      );
+      orderStats.newOrders = orderStats.pending + orderStats.confirmed;
+      const lastOrderUpdatedLabel = new Date().toLocaleTimeString("vi-VN", { hour12: false });
+
       const categories = categoriesRaw.map((category) => {
         const rawName = typeof category._id === "string" ? category._id.trim() : "";
         return {
@@ -205,22 +253,32 @@ class AdminController {
         statusOptions: STATUS_OPTIONS,
         filteredCount: books.length,
         message,
+        orders,
+        orderStats,
+        lastOrderUpdatedLabel,
         pageScript: "admin.js",
         status: status === "error" ? "error" : "success",
+        navActive: "books",
       });
     } catch (error) {
       next(error);
     }
   }
 
-  showCreateForm(req, res) {
-    return res.render("admin/BookForm", {
-      book: {},
-      formTitle: "Tạo sách mới",
-      action: "/admin/books",
-      submitLabel: "Tạo sách",
-      pageScript: "admin.js",
-    });
+  async showCreateForm(req, res, next) {
+    try {
+      const categories = await this.loadCategories();
+      return res.render("admin/BookForm", {
+        book: {},
+        formTitle: "Tạo sách mới",
+        action: "/admin/books",
+        submitLabel: "Tạo sách",
+        pageScript: "admin.js",
+        categories,
+      });
+    } catch (error) {
+      next(error);
+    }
   }
 
   async create(req, res, next) {
@@ -244,12 +302,14 @@ class AdminController {
           "/admin/books?status=error&message=Sách bạn tìm kiếm không tồn tại"
         );
       }
+      const categories = await this.loadCategories();
       return res.render("admin/BookForm", {
         book,
         formTitle: "Chỉnh sửa thông tin sách",
         action: `/admin/books/${id}`,
         submitLabel: "Cập nhật sách",
         pageScript: "admin.js",
+        categories,
       });
     } catch (error) {
       next(error);
@@ -314,6 +374,16 @@ class AdminController {
       isHighlight: toBoolean(body.isHighlight, false),
       isFlashSale: toBoolean(body.isFlashSale, false),
     };
+  }
+
+  async loadCategories() {
+    const categoriesRaw = await Book.distinct("category");
+    return categoriesRaw
+      .map((category) =>
+        typeof category === "string" ? category.trim() : ""
+      )
+      .filter(Boolean)
+      .sort((a, b) => a.localeCompare(b, "vi", { sensitivity: "base" }));
   }
 }
 
