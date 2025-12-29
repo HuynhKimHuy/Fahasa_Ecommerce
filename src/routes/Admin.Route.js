@@ -19,5 +19,10 @@ AdminRoute.get("/orders", OrderController.adminList);
 AdminRoute.post("/orders/:id/status", OrderController.updateStatus);
 AdminRoute.post("/orders/:id/delete", OrderController.delete);
 AdminRoute.get("/users", UserController.adminList);
+AdminRoute.get("/users/new", UserController.showCreateForm);
+AdminRoute.post("/users", UserController.create);
+AdminRoute.get("/users/:id/edit", UserController.showEditForm);
+AdminRoute.post("/users/:id", UserController.update);
+AdminRoute.post("/users/:id/delete", UserController.delete);
 
 export default AdminRoute;

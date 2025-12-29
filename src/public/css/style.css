@@ -917,10 +917,11 @@ body.is-drawer-open {
 }
 
 .flash-sale__name {
-  font-size: 14px;
-  font-weight: 500;
+  font-size: clamp(0.95rem, 0.4vw + 0.85rem, 1.05rem);
+  font-weight: 700;
+  color: #0f172a;
   margin-bottom: 6px;
-  height: 40px;
+  min-height: 2.8em; /* giữ chiều cao luôn đủ 2 dòng */
   display: -webkit-box;
   -webkit-line-clamp: 2;
   /* hoặc 3 dòng */
@@ -930,9 +931,14 @@ body.is-drawer-open {
 }
 
 .flash-sale__author {
-  font-size: 12px;
-  color: #757575;
-  min-height: 16px;
+  font-size: 0.9rem;
+  color: #4b5563;
+  font-weight: 600;
+  min-height: 18px;
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-line-clamp: 1; /* CỐ ĐỊNH 2 DÒNG */
+  -webkit-box-orient: vertical;
 }
 
 .flash-sale__price-row {
@@ -3231,16 +3237,21 @@ body.is-admin-sidebar-open {
   gap: 12px;
   margin-bottom: 12px;
   flex-wrap: wrap;
+  background: linear-gradient(135deg, #d9252a, #b81e22);
+  padding: 12px 14px;
+  border-radius: 14px;
+  color: #fff;
+  box-shadow: 0 12px 24px rgba(185, 30, 34, 0.18);
 }
 .category-slider__eyebrow {
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: #111827;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #fff;
   margin-bottom: 4px;
 }
 .category-slider__subtitle {
   margin: 0;
-  color: #6b7280;
+  color: rgba(255, 255, 255, 0.9);
   font-size: 0.95rem;
   max-width: 720px;
 }

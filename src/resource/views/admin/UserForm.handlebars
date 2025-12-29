@@ -2,23 +2,14 @@
   <header class="admin-hero">
     <div>
       <p class="admin-hero__eyebrow">Quản trị hệ thống</p>
-      <h1>Quản lý người dùng</h1>
+      <h1>{{formTitle}}</h1>
       <p class="admin-hero__description">
-        Xem danh sách tài khoản đã đăng ký, vai trò, và trạng thái hoạt động.
+        Tạo hoặc chỉnh sửa tài khoản người dùng, phân quyền và trạng thái hoạt động.
       </p>
-    </div>
-    <div class="admin-hero__actions">
-      <button class="admin-sidebar-toggle" type="button" data-admin-sidebar-open>
-        <span class="admin-sidebar-toggle__bars" aria-hidden="true">
-          <span></span><span></span><span></span>
-        </span>
-        <span class="admin-sidebar-toggle__label">Menu</span>
-      </button>
-      <a class="btn btn--primary" href="/admin/users/new">Thêm người dùng</a>
     </div>
   </header>
 
-  <div class="admin-layout" data-admin-layout>
+  <div class="admin-layout">
     <aside class="admin-sidebar admin-sidebar--compact" data-sidebar-accordion data-admin-sidebar>
       <button class="admin-sidebar__close" type="button" data-admin-sidebar-close>
         <i class="fa-solid fa-xmark"></i>
@@ -71,6 +62,7 @@
           </a>
         </div>
       </div>
+
       <div
         class="admin-sidebar__section {{#if (eq navActive "orders")}}is-open{{/if}}"
         data-accordion-section="orders"
@@ -88,6 +80,7 @@
           </a>
         </div>
       </div>
+
       <div
         class="admin-sidebar__section {{#if (eq navActive "users")}}is-open{{/if}}"
         data-accordion-section="users"
@@ -102,82 +95,66 @@
               <i class="fa-solid fa-users admin-sidebar__icon" aria-hidden="true"></i>
               <span>Danh sách người dùng</span>
             </span>
-            <span class="admin-sidebar__count">{{stats.total}}</span>
+          </a>
+          <a class="admin-sidebar__link" href="/admin/users/new">
+            <span class="admin-sidebar__link-left">
+              <i class="fa-solid fa-user-plus admin-sidebar__icon" aria-hidden="true"></i>
+              <span>Tạo người dùng</span>
+            </span>
           </a>
         </div>
       </div>
     </aside>
 
     <div class="admin-main">
-      <section class="admin-summary-grid">
-        <article class="summary-card">
-          <p>Tổng người dùng</p>
-          <strong>{{stats.total}}</strong>
-        </article>
-        <article class="summary-card">
-          <p>Admin</p>
-          <strong>{{stats.admins}}</strong>
-        </article>
-        <article class="summary-card">
-          <p>Khách</p>
-          <strong>{{stats.customers}}</strong>
-        </article>
-        <article class="summary-card">
-          <p>Hoạt động</p>
-          <strong>{{stats.active}}</strong>
-        </article>
-      </section>
+      <section class="admin-form-card">
+        {{#if errors}}
+          <div class="auth-alert auth-alert--error">
+            {{#each errors}}
+              <div>{{this}}</div>
+            {{/each}}
+          </div>
+        {{/if}}
 
-      <section class="admin-table-card">
-        <div class="admin-table-card__header">
-          <h2>Danh sách người dùng</h2>
-          <p>{{stats.total}} tài khoản</p>
-        </div>
-        <div class="admin-table-wrapper">
-          <table class="admin-table">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Họ tên</th>
-                <th>Email</th>
-                <th>Vai trò</th>
-                <th>Trạng thái</th>
-                <th>Ngày tạo</th>
-                <th>Hành động</th>
-              </tr>
-            </thead>
-            <tbody>
-              {{#if users.length}}
-                {{#each users}}
-                  <tr>
-                    <td>{{increment @index}}</td>
-                    <td>{{fullName}}</td>
-                    <td>{{email}}</td>
-                    <td>
-                      <span class="badge {{#if (eq role "admin")}}badge--info{{else}}badge--muted{{/if}}">
-                        {{roleLabel}}
-                      </span>
-                    </td>
-                    <td>
-                      <span class="badge badge--{{statusTone}}">{{statusLabel}}</span>
-                    </td>
-                    <td>{{createdAtLabel}}</td>
-                    <td class="admin-table__actions">
-                      <a class="btn btn--outline btn--small" href="/admin/users/{{_id}}/edit">Sửa</a>
-                      <form action="/admin/users/{{_id}}/delete" method="post" class="admin-inline-form">
-                        <button type="submit" class="btn btn--danger btn--small" data-confirm="Xoá người dùng này?">Xoá</button>
-                      </form>
-                    </td>
-                  </tr>
-                {{/each}}
-              {{else}}
-                <tr>
-                  <td colspan="7" class="admin-table__empty">Chưa có người dùng.</td>
-                </tr>
-              {{/if}}
-            </tbody>
-          </table>
-        </div>
+        <form action="{{action}}" method="post" class="admin-book-form">
+          <div class="form-grid">
+            <label>
+              <span>Họ tên</span>
+              <input type="text" name="fullName" value="{{user.fullName}}" required />
+            </label>
+
+            <label>
+              <span>Email</span>
+              <input type="email" name="email" value="{{user.email}}" required />
+            </label>
+
+            <label>
+              <span>Mật khẩu {{#if user._id}}(để trống nếu không đổi){{/if}}</span>
+              <input type="password" name="password" />
+            </label>
+
+            <label>
+              <span>Vai trò</span>
+              <select name="role">
+                <option value="user" {{#if (eq user.role "user")}}selected{{/if}}>Khách</option>
+                <option value="admin" {{#if (eq user.role "admin")}}selected{{/if}}>Admin</option>
+              </select>
+            </label>
+
+            <label>
+              <span>Trạng thái</span>
+              <select name="isActive">
+                <option value="true" {{#if user.isActive}}selected{{/if}}>Hoạt động</option>
+                <option value="false" {{#unless user.isActive}}selected{{/unless}}>Khoá</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="admin-book-form__actions">
+            <button type="submit" class="btn btn--primary">Lưu</button>
+            <a class="btn btn--text" href="/admin/users">Huỷ</a>
+          </div>
+        </form>
       </section>
     </div>
   </div>
