@@ -1,6 +1,7 @@
 import User from "../model/user.js";
 import { hashPassword } from "../helpers/auth.helper.js";
 import mongoose from "mongoose";
+import Order from "../model/order.js";
 
 class UserController {
   async adminList(req, res, next) {
@@ -185,6 +186,48 @@ class UserController {
       }
       await User.deleteOne({ _id: id });
       return res.redirect("/admin/users?status=success&message=Đã xoá người dùng");
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async viewOrders(req, res, next) {
+    try {
+      const { id } = req.params;
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.redirect("/admin/users?status=error&message=Không tìm thấy người dùng");
+      }
+
+      const user = await User.findById(id).lean();
+      if (!user) {
+        return res.redirect("/admin/users?status=error&message=Không tìm thấy người dùng");
+      }
+
+      const ordersRaw = await Order.find({ email: user.email }).lean().sort({ createdAt: -1 });
+      const statusMap = {
+        pending: { label: "Đơn mới", tone: "warning" },
+        confirmed: { label: "Đã xác nhận", tone: "info" },
+        shipping: { label: "Đang giao", tone: "info" },
+        completed: { label: "Hoàn tất", tone: "success" },
+        canceled: { label: "Đã huỷ", tone: "danger" },
+      };
+
+      const orders = ordersRaw.map((order) => ({
+        ...order,
+        createdAtLabel: order.createdAt
+          ? new Date(order.createdAt).toLocaleString("vi-VN", { hour12: false })
+          : "",
+        statusLabel: statusMap[order.status]?.label ?? "Đơn mới",
+        statusTone: statusMap[order.status]?.tone ?? "warning",
+        itemCount: order.items?.length ?? 0,
+      }));
+
+      return res.render("admin/UserOrders", {
+        navActive: "users",
+        user,
+        orders,
+        pageScript: "admin.js",
+      });
     } catch (error) {
       next(error);
     }

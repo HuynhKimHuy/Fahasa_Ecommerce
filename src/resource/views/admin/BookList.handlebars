@@ -153,12 +153,6 @@
               <span>Danh sách người dùng</span>
             </span>
           </a>
-          <a class="admin-sidebar__link" href="/admin/users">
-            <span class="admin-sidebar__link-left">
-              <i class="fa-solid fa-user-shield admin-sidebar__icon" aria-hidden="true"></i>
-              <span>Phân quyền &amp; vai trò</span>
-            </span>
-          </a>
         </div>
       </div>
     </aside>
@@ -407,15 +401,17 @@
                         <span class="badge badge--flash">Flash sale</span>
                       {{/if}}
                     </td>
-                    <td class="admin-table__actions">
-                      <a class="btn btn--outline" href="/admin/books/{{_id}}/edit">Chỉnh sửa</a>
+                    <td class="admin-table__actions admin-table__actions--compact">
+                      <a class="btn btn--icon" href="/admin/books/{{_id}}/edit" title="Chỉnh sửa">
+                        <i class="fa-solid fa-pen"></i>
+                      </a>
                       <form
                         action="/admin/books/{{_id}}/delete"
                         method="post"
                         class="admin-inline-form"
                       >
-                        <button type="submit" class="btn btn--danger" data-confirm="Bạn có chắc chắn muốn xóa sách này?">
-                          Xóa
+                        <button type="submit" class="btn btn--icon btn--danger" data-confirm="Bạn có chắc chắn muốn xóa sách này?" title="Xoá">
+                          <i class="fa-solid fa-trash"></i>
                         </button>
                       </form>
                     </td>

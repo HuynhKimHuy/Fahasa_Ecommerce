@@ -24,5 +24,6 @@ AdminRoute.post("/users", UserController.create);
 AdminRoute.get("/users/:id/edit", UserController.showEditForm);
 AdminRoute.post("/users/:id", UserController.update);
 AdminRoute.post("/users/:id/delete", UserController.delete);
+AdminRoute.get("/users/:id/orders", UserController.viewOrders);
 
 export default AdminRoute;

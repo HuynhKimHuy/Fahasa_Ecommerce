@@ -2,23 +2,12 @@
   <header class="admin-hero">
     <div>
       <p class="admin-hero__eyebrow">Quản trị hệ thống</p>
-      <h1>Quản lý người dùng</h1>
-      <p class="admin-hero__description">
-        Xem danh sách tài khoản đã đăng ký, vai trò, và trạng thái hoạt động.
-      </p>
-    </div>
-    <div class="admin-hero__actions">
-      <button class="admin-sidebar-toggle" type="button" data-admin-sidebar-open>
-        <span class="admin-sidebar-toggle__bars" aria-hidden="true">
-          <span></span><span></span><span></span>
-        </span>
-        <span class="admin-sidebar-toggle__label">Menu</span>
-      </button>
-      <a class="btn btn--primary" href="/admin/users/new">Thêm người dùng</a>
+      <h1>Đơn hàng của {{user.fullName}}</h1>
+      <p class="admin-hero__description">Email: {{user.email}} · Vai trò: {{user.role}}</p>
     </div>
   </header>
 
-  <div class="admin-layout" data-admin-layout>
+  <div class="admin-layout">
     <aside class="admin-sidebar admin-sidebar--compact" data-sidebar-accordion data-admin-sidebar>
       <button class="admin-sidebar__close" type="button" data-admin-sidebar-close>
         <i class="fa-solid fa-xmark"></i>
@@ -71,6 +60,7 @@
           </a>
         </div>
       </div>
+
       <div
         class="admin-sidebar__section {{#if (eq navActive "orders")}}is-open{{/if}}"
         data-accordion-section="orders"
@@ -88,6 +78,7 @@
           </a>
         </div>
       </div>
+
       <div
         class="admin-sidebar__section {{#if (eq navActive "users")}}is-open{{/if}}"
         data-accordion-section="users"
@@ -97,89 +88,57 @@
           <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
         </button>
         <div class="admin-sidebar__section-body">
-          <a class="admin-sidebar__link {{#if (eq navActive "users")}}is-active{{/if}}" href="/admin/users">
+          <a class="admin-sidebar__link" href="/admin/users">
             <span class="admin-sidebar__link-left">
               <i class="fa-solid fa-users admin-sidebar__icon" aria-hidden="true"></i>
               <span>Danh sách người dùng</span>
             </span>
-            <span class="admin-sidebar__count">{{stats.total}}</span>
+          </a>
+          <a class="admin-sidebar__link" href="/admin/users/new">
+            <span class="admin-sidebar__link-left">
+              <i class="fa-solid fa-user-plus admin-sidebar__icon" aria-hidden="true"></i>
+              <span>Tạo người dùng</span>
+            </span>
           </a>
         </div>
       </div>
     </aside>
 
     <div class="admin-main">
-      <section class="admin-summary-grid">
-        <article class="summary-card">
-          <p>Tổng người dùng</p>
-          <strong>{{stats.total}}</strong>
-        </article>
-        <article class="summary-card">
-          <p>Admin</p>
-          <strong>{{stats.admins}}</strong>
-        </article>
-        <article class="summary-card">
-          <p>Khách</p>
-          <strong>{{stats.customers}}</strong>
-        </article>
-        <article class="summary-card">
-          <p>Hoạt động</p>
-          <strong>{{stats.active}}</strong>
-        </article>
-      </section>
-
       <section class="admin-table-card">
         <div class="admin-table-card__header">
-          <h2>Danh sách người dùng</h2>
-          <p>{{stats.total}} tài khoản</p>
+          <h2>Đơn hàng đã đặt</h2>
+          <p>{{orders.length}} đơn</p>
         </div>
         <div class="admin-table-wrapper">
           <table class="admin-table">
             <thead>
               <tr>
                 <th>#</th>
-                <th>Họ tên</th>
-                <th>Email</th>
-                <th>Vai trò</th>
+                <th>Mã đơn</th>
+                <th>Ngày đặt</th>
+                <th>Sản phẩm</th>
+                <th>Tổng tiền</th>
                 <th>Trạng thái</th>
-                <th>Ngày tạo</th>
-                <th>Hành động</th>
               </tr>
             </thead>
             <tbody>
-              {{#if users.length}}
-                {{#each users}}
+              {{#if orders.length}}
+                {{#each orders}}
                   <tr>
                     <td>{{increment @index}}</td>
-                    <td>{{fullName}}</td>
-                    <td>{{email}}</td>
-                    <td>
-                      <span class="badge {{#if (eq role "admin")}}badge--info{{else}}badge--muted{{/if}}">
-                        {{roleLabel}}
-                      </span>
-                    </td>
+                    <td>{{_id}}</td>
+                    <td>{{createdAtLabel}}</td>
+                    <td>{{itemCount}} SP</td>
+                    <td>{{formatPrice totalPrice}}</td>
                     <td>
                       <span class="badge badge--{{statusTone}}">{{statusLabel}}</span>
-                    </td>
-                    <td>{{createdAtLabel}}</td>
-                    <td class="admin-table__actions admin-table__actions--compact">
-                      <a class="btn btn--icon" href="/admin/users/{{_id}}/orders" title="Đơn hàng">
-                        <i class="fa-solid fa-receipt"></i>
-                      </a>
-                      <a class="btn btn--icon" href="/admin/users/{{_id}}/edit" title="Chỉnh sửa">
-                        <i class="fa-solid fa-pen"></i>
-                      </a>
-                      <form action="/admin/users/{{_id}}/delete" method="post" class="admin-inline-form">
-                        <button type="submit" class="btn btn--icon btn--danger" data-confirm="Xoá người dùng này?" title="Xoá">
-                          <i class="fa-solid fa-trash"></i>
-                        </button>
-                      </form>
                     </td>
                   </tr>
                 {{/each}}
               {{else}}
                 <tr>
-                  <td colspan="7" class="admin-table__empty">Chưa có người dùng.</td>
+                  <td colspan="6" class="admin-table__empty">Người dùng này chưa có đơn hàng.</td>
                 </tr>
               {{/if}}
             </tbody>
