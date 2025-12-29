@@ -7,10 +7,22 @@
         Xem danh sách tài khoản đã đăng ký, vai trò, và trạng thái hoạt động.
       </p>
     </div>
+    <div class="admin-hero__actions">
+      <button class="admin-sidebar-toggle" type="button" data-admin-sidebar-open>
+        <span class="admin-sidebar-toggle__bars" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </span>
+        <span class="admin-sidebar-toggle__label">Menu</span>
+      </button>
+    </div>
   </header>
 
-  <div class="admin-layout">
-    <aside class="admin-sidebar admin-sidebar--compact" data-sidebar-accordion>
+  <div class="admin-layout" data-admin-layout>
+    <aside class="admin-sidebar admin-sidebar--compact" data-sidebar-accordion data-admin-sidebar>
+      <button class="admin-sidebar__close" type="button" data-admin-sidebar-close>
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <div class="admin-sidebar__drag-handle" data-admin-sidebar-drag></div>
       <div class="admin-sidebar__top">
         <button
           type="button"

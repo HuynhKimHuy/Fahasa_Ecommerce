@@ -51,6 +51,106 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  const setupAdminSidebar = () => {
+    const sidebar = document.querySelector("[data-admin-sidebar]");
+    const overlay = document.querySelector("[data-admin-sidebar-overlay]");
+    if (!sidebar || !overlay) return;
+
+    const openButtons = document.querySelectorAll("[data-admin-sidebar-open]");
+    const closeButtons = document.querySelectorAll("[data-admin-sidebar-close]");
+    const dragHandle = sidebar.querySelector("[data-admin-sidebar-drag]");
+
+    const openSidebar = () => {
+      sidebar.classList.add("is-open");
+      overlay.classList.add("is-visible");
+      document.body.classList.add("is-admin-sidebar-open");
+    };
+
+    const closeSidebar = () => {
+      sidebar.classList.remove("is-open");
+      overlay.classList.remove("is-visible");
+      document.body.classList.remove("is-admin-sidebar-open");
+    };
+
+    openButtons.forEach((btn) =>
+      btn.addEventListener("click", (event) => {
+        event.preventDefault();
+        openSidebar();
+      })
+    );
+
+    closeButtons.forEach((btn) =>
+      btn.addEventListener("click", (event) => {
+        event.preventDefault();
+        closeSidebar();
+      })
+    );
+
+    overlay.addEventListener("click", closeSidebar);
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        closeSidebar();
+      }
+    });
+
+    // Drag-to-close (mobile) when sidebar is open
+    if (dragHandle) {
+      let startX = 0;
+      let currentX = 0;
+      let isDragging = false;
+      let sidebarWidth = sidebar.getBoundingClientRect().width;
+
+      const onPointerMove = (event) => {
+        if (!isDragging) return;
+        currentX = event.clientX ?? (event.touches && event.touches[0]?.clientX) ?? 0;
+        const delta = Math.min(0, currentX - startX);
+        sidebar.style.transform = `translateX(${delta}px)`;
+      };
+
+      const onPointerUp = () => {
+        if (!isDragging) return;
+        document.removeEventListener("pointermove", onPointerMove);
+        document.removeEventListener("pointerup", onPointerUp);
+        isDragging = false;
+
+        const delta = currentX - startX;
+        sidebar.style.transform = "";
+        if (delta < -sidebarWidth * 0.25) {
+          closeSidebar();
+        }
+      };
+
+      dragHandle.addEventListener("pointerdown", (event) => {
+        if (!sidebar.classList.contains("is-open")) return;
+        sidebarWidth = sidebar.getBoundingClientRect().width;
+        startX = event.clientX ?? 0;
+        currentX = startX;
+        isDragging = true;
+        sidebar.style.transition = "none";
+        document.addEventListener("pointermove", onPointerMove);
+        document.addEventListener("pointerup", onPointerUp);
+      });
+
+      dragHandle.addEventListener("touchstart", (event) => {
+        if (!sidebar.classList.contains("is-open")) return;
+        sidebarWidth = sidebar.getBoundingClientRect().width;
+        startX = event.touches[0]?.clientX ?? 0;
+        currentX = startX;
+        isDragging = true;
+        sidebar.style.transition = "none";
+        document.addEventListener("touchmove", onPointerMove);
+        document.addEventListener("touchend", onPointerUp, { once: true });
+      });
+
+      document.addEventListener("pointerup", () => {
+        sidebar.style.transition = "";
+      });
+      document.addEventListener("touchend", () => {
+        sidebar.style.transition = "";
+      });
+    }
+  };
+
   document.querySelectorAll("[data-sidebar-accordion]").forEach((sidebar) => {
     const sections = Array.from(
       sidebar.querySelectorAll("[data-accordion-section]")
@@ -84,4 +184,6 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
   });
+
+  setupAdminSidebar();
 });

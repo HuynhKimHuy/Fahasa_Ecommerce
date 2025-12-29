@@ -95,8 +95,8 @@
           <img src="https://cdn1.fahasa.com/skin/frontend/ma_vanese/fahasa/images/flashsale/label-flashsale.svg?q="
             alt="">
         </a>
-        <span class="flash-sale__label">Kết thúc trong</span>
-        <div class="flash-sale__countdown">
+        <span class="flash-sale__label" data-countdown-label>Kết thúc trong</span>
+        <div class="flash-sale__countdown" data-countdown data-end-time="{{flashSaleEndTime}}">
           <span class="time-box">00</span>
           <span>:</span>
           <span class="time-box">00</span>
@@ -163,8 +163,77 @@
   </div>
 </section>
 
-{{!-- danh mục --}}
 
+{{#if categorySections.length}}
+  {{#each categorySections}}
+    <section class="category-slider" data-carousel>
+      <div class="container">
+        <div class="category-slider__header">
+          <div>
+            <p class="category-slider__eyebrow">{{this.title}}</p>
+            {{#if this.subtitle}}
+              <p class="category-slider__subtitle">{{this.subtitle}}</p>
+            {{/if}}
+          </div>
+          <a href="{{this.viewAllUrl}}" class="flash-sale__view-all">Xem tất cả &rarr;</a>
+        </div>
+
+        {{#if this.books.length}}
+          <div class="category-slider__carousel">
+            <button class="category-slider__nav category-slider__nav--prev" type="button" data-carousel-prev>
+              <i class="fa-solid fa-chevron-left"></i>
+            </button>
+            <div class="category-slider__list" data-carousel-list>
+              {{#each this.books}}
+                <article class="flash-sale__item category-slider__item">
+                  <a class="flash-sale__item-link" href="/collection/{{this.slug}}">
+                    <div class="flash-sale__thumb">
+                      <img src="{{this.coverImage}}" alt="{{this.title}}" loading="lazy" />
+                    </div>
+
+                    <div class="flash-sale__body">
+                      <h3 class="flash-sale__name">{{this.title}}</h3>
+                      <p class="flash-sale__author">{{this.author}}</p>
+
+                      <div class="category-slider__rating">
+                        <i class="fa-solid fa-star"></i>
+                        <span>{{#if this.rating}}{{this.rating}}{{else}}4.8{{/if}}</span>
+                        <span class="category-slider__rating-count">/5</span>
+                      </div>
+
+                      <div class="flash-sale__price-row">
+                        <span class="flash-sale__price">{{formatPrice this.newPrice}}</span>
+                        {{#if this.discountPercent}}
+                          <span class="flash-sale__discount">-{{this.discountPercent}}%</span>
+                        {{/if}}
+                      </div>
+
+                      {{#if this.oldPrice}}
+                        <div class="flash-sale__old-price">{{formatPrice this.oldPrice}}</div>
+                      {{/if}}
+
+                      <button type="button" class="category-slider__cart-btn">
+                        <i class="fa-solid fa-cart-plus"></i>
+                        <span>Thêm vào giỏ</span>
+                      </button>
+                    </div>
+                  </a>
+                </article>
+              {{/each}}
+            </div>
+            <button class="category-slider__nav category-slider__nav--next" type="button" data-carousel-next>
+              <i class="fa-solid fa-chevron-right"></i>
+            </button>
+          </div>
+        {{else}}
+          <p class="category-slider__empty">Chưa có sản phẩm để hiển thị.</p>
+        {{/if}}
+      </div>
+    </section>
+  {{/each}}
+{{/if}}
+
+{{!-- danh mục --}}
 <section class="catalogy">
   <div class="container">
     <div class="catalogy_inner">
@@ -192,3 +261,56 @@
     </div>
   </div>
 </section>
+
+
+{{!-- danh sách sách nổi bật --}}
+<section class="home-books">
+  <div class="container">
+    <div class="home-books__header">
+      <div class="home-books__title-wrap">
+        <p class="home-books__eyebrow">Đề xuất hôm nay</p>
+        <h2 class="home-books__title">Danh sách sách nổi bật</h2>
+        <p class="home-books__subtitle">Khám phá những tựa sách mới và được yêu thích nhất.</p>
+      </div>
+      <a href="/collection" class="flash-sale__view-all">Xem tất cả &rarr;</a>
+    </div>
+
+    {{#if featuredBooks.length}}
+    <div class="home-books__grid">
+      {{#each featuredBooks}}
+      <article class="flash-sale__item home-books__card">
+        <a class="flash-sale__item-link" href="/collection/{{this.slug}}">
+          <div class="flash-sale__thumb">
+            <img src="{{this.coverImage}}" alt="{{this.title}}" loading="lazy" />
+          </div>
+
+          <div class="flash-sale__body">
+            <h3 class="flash-sale__name">
+              {{this.title}}
+            </h3>
+            <p class="flash-sale__author">{{this.author}}</p>
+
+            <div class="flash-sale__price-row">
+              <span class="flash-sale__price">{{formatPrice this.newPrice}}</span>
+              {{#if this.discountPercent}}
+              <span class="flash-sale__discount">-{{this.discountPercent}}%</span>
+              {{/if}}
+            </div>
+
+            {{#if this.oldPrice}}
+            <div class="flash-sale__old-price">
+              {{formatPrice this.oldPrice}}
+            </div>
+            {{/if}}
+          </div>
+        </a>
+      </article>
+      {{/each}}
+    </div>
+    {{else}}
+    <p class="home-books__empty">Chưa có sách nào để hiển thị.</p>
+    {{/if}}
+  </div>
+</section>
+
+

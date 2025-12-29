@@ -5,6 +5,11 @@
   <div class="container">
     <nav class="navbar">
       <div class="navbar__left">
+        <button type="button" class="navbar__toggle" aria-label="Mở menu" data-drawer-open>
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
         {{!-- navlogo --}}
         <a href="/" class="nav_logo">
           <img src="/img/image.png" alt="">
@@ -82,6 +87,94 @@
 
     </nav>
   </div>
+
+  <div class="mobile-drawer__overlay" data-drawer-overlay></div>
+  <aside class="mobile-drawer" data-drawer>
+    <div class="mobile-drawer__header">
+      <div class="mobile-drawer__brand">
+        <img src="/img/image.png" alt="Fahasa Logo">
+        <div class="mobile-drawer__brand-text">
+          <span>Fahasa</span>
+          <small>Khám phá sách</small>
+        </div>
+      </div>
+      <button type="button" class="mobile-drawer__close" aria-label="Đóng menu" data-drawer-close>
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <div class="mobile-drawer__body">
+      <div class="mobile-accordion" data-accordion>
+        <button class="mobile-accordion__trigger" type="button" data-accordion-toggle>
+          <span>Danh mục</span>
+          <i class="fa-solid fa-chevron-down"></i>
+        </button>
+        <div class="mobile-accordion__panel" data-accordion-panel>
+          {{#if categories.length}}
+            <div class="mobile-accordion__list">
+              {{#each categories}}
+                <a class="mobile-accordion__link" href="/collection?category={{urlEncode this.name}}">
+                  <span class="mobile-accordion__dot"></span>
+                  <span>{{this.name}}</span>
+                </a>
+              {{/each}}
+              <a class="mobile-accordion__link mobile-accordion__link--all" href="/collection">Xem tất cả</a>
+            </div>
+          {{else}}
+            <p class="mobile-accordion__empty">Chưa có danh mục.</p>
+          {{/if}}
+        </div>
+      </div>
+
+      <div class="mobile-accordion" data-accordion>
+        <button class="mobile-accordion__trigger" type="button" data-accordion-toggle>
+          <span>Tài khoản & tiện ích</span>
+          <i class="fa-solid fa-chevron-down"></i>
+        </button>
+        <div class="mobile-accordion__panel" data-accordion-panel>
+          <div class="mobile-accordion__list">
+            <a class="mobile-accordion__link" href="#">
+              <i class="fa-regular fa-bell"></i>
+              <span>Thông báo</span>
+            </a>
+            <a class="mobile-accordion__link" href="/cart">
+              <i class="fa-solid fa-bag-shopping"></i>
+              <span>Giỏ hàng</span>
+            </a>
+
+            {{#if currentUser}}
+              <div class="mobile-accordion__user">
+                <i class="fa-solid fa-user-check"></i>
+                <div>
+                  <p>Xin chào</p>
+                  <strong>{{currentUser.fullName}}</strong>
+                </div>
+              </div>
+              <a class="mobile-accordion__link" href="/auth/logout">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                <span>Đăng xuất</span>
+              </a>
+              {{#if (isAdmin currentUser.role)}}
+                <a class="mobile-accordion__link" href="/admin/books">
+                  <i class="fa-solid fa-shield"></i>
+                  <span>Admin</span>
+                </a>
+              {{/if}}
+            {{else}}
+              <a class="mobile-accordion__link" href="/auth/login">
+                <i class="fa-solid fa-user"></i>
+                <span>Đăng nhập</span>
+              </a>
+              <a class="mobile-accordion__link" href="/auth/register">
+                <i class="fa-solid fa-user-plus"></i>
+                <span>Đăng ký</span>
+              </a>
+            {{/if}}
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
 </header>
 
 {{!-- end header --}}
