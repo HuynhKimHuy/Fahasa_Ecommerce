@@ -1,6 +1,7 @@
 import Book from "../model/product.js";
 import Order from "../model/order.js";
 import { normalizeBooksList } from "../helpers/book.helper.js";
+import cloudinary from "../config/cloudinary.js";
 
 const createSlug = (value = "") =>
   value
@@ -131,6 +132,21 @@ const toBoolean = (value, fallback = false) => {
   }
   return Boolean(value);
 };
+
+const CLOUDINARY_FOLDER = "stories";
+
+const toText = (value, fallback = "") =>
+  typeof value === "string" ? value.trim() : fallback;
+
+async function uploadCoverImage(file) {
+  if (!file?.buffer?.length) return null;
+  const dataUri = `data:${file.mimetype || "image/jpeg"};base64,${file.buffer.toString("base64")}`;
+  const result = await cloudinary.uploader.upload(dataUri, {
+    folder: CLOUDINARY_FOLDER,
+    resource_type: "image",
+  });
+  return result.secure_url;
+}
 
 class AdminController {
   constructor() {
@@ -283,13 +299,22 @@ class AdminController {
 
   async create(req, res, next) {
     try {
-      const payload = this.buildPayload(req.body);
+      const payload = await this.buildPayload(req.body, req.file);
+      if (!payload.coverImage) {
+        return res.redirect(
+          "/admin/books?status=error&message=Vui lòng tải lên ảnh bìa từ máy"
+        );
+      }
       await Book.create(payload);
-      return res.redirect(
-        "/admin/books?status=success&message=Sách đã được tạo thành công"
-      );
+      return res.redirect("/admin/books?status=success&message=Sách đã được tạo thành công");
     } catch (error) {
-      next(error);
+      console.error("Create book error:", error);
+      const message =
+        error?.message ||
+        (typeof error === "string" ? error : "Không thể tạo sách, vui lòng thử lại.");
+      return res.redirect(
+        `/admin/books?status=error&message=${encodeURIComponent(message)}`
+      );
     }
   }
 
@@ -319,7 +344,19 @@ class AdminController {
   async update(req, res, next) {
     try {
       const { id } = req.params;
-      const payload = this.buildPayload(req.body);
+      const existing = await Book.findById(id).lean();
+      if (!existing) {
+        return res.redirect(
+          "/admin/books?status=error&message=Cập nhật thất bại do sách không tồn tại"
+        );
+      }
+
+      const payload = await this.buildPayload(req.body, req.file, existing.coverImage);
+      if (!payload.coverImage) {
+        return res.redirect(
+          "/admin/books?status=error&message=Vui lòng tải lên ảnh bìa từ máy"
+        );
+      }
       const updated = await Book.findByIdAndUpdate(id, payload, {
         new: true,
         runValidators: true,
@@ -333,7 +370,13 @@ class AdminController {
         "/admin/books?status=success&message=Sách đã được cập nhật"
       );
     } catch (error) {
-      next(error);
+      console.error("Update book error:", error);
+      const message =
+        error?.message ||
+        (typeof error === "string" ? error : "Không thể cập nhật sách, vui lòng thử lại.");
+      return res.redirect(
+        `/admin/books?status=error&message=${encodeURIComponent(message)}`
+      );
     }
   }
 
@@ -349,15 +392,19 @@ class AdminController {
     }
   }
 
-  buildPayload(body) {
-    const slugValue = body.slug?.trim() || "";
+  async buildPayload(body, file, currentCoverImage = "") {
+    const titleValue = toText(body.title);
+    const slugValue = toText(body.slug) || createSlug(titleValue);
+    const existingCover = toText(currentCoverImage);
+    const uploadedCoverImage = await uploadCoverImage(file);
+
     return {
-      title: body.title?.trim() ?? "",
-      slug: slugValue || createSlug(body.title),
-      author: body.author?.trim() ?? "",
-      category: body.category?.trim() ?? "",
-      publisher: body.publisher?.trim() ?? "",
-      supplier: body.supplier?.trim() ?? "",
+      title: titleValue,
+      slug: slugValue,
+      author: toText(body.author),
+      category: toText(body.category),
+      publisher: toText(body.publisher),
+      supplier: toText(body.supplier),
       publishYear: toNumber(body.publishYear, null),
       oldPrice: toNumber(body.oldPrice, 0),
       newPrice: toNumber(body.newPrice, toNumber(body.price, 0)),
@@ -365,11 +412,11 @@ class AdminController {
       sold: toNumber(body.sold, 0),
       discountPercent: toNumber(body.discountPercent, 0),
       stock: toNumber(body.stock, 0),
-      description: body.description?.trim() ?? "",
-      longDescription: body.longDescription?.trim() ?? "",
-      coverImage: body.coverImage?.trim() ?? "",
-      size: body.size?.trim() ?? "",
-      coverType: body.coverType?.trim() ?? "",
+      description: toText(body.description),
+      longDescription: toText(body.longDescription),
+      coverImage: uploadedCoverImage || existingCover,
+      size: toText(body.size),
+      coverType: toText(body.coverType),
       isActive: toBoolean(body.isActive, true),
       isHighlight: toBoolean(body.isHighlight, false),
       isFlashSale: toBoolean(body.isFlashSale, false),

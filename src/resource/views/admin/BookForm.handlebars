@@ -4,7 +4,7 @@
 
   <section class="admin-form-card">
     <div class="container">
-      <form action="{{action}}" method="post" class="admin-book-form">
+      <form action="{{action}}" method="post" enctype="multipart/form-data" class="admin-book-form">
         <div class="form-grid">
           <label>
             <span>Tiêu đề sách</span>
@@ -57,8 +57,14 @@
           </label>
 
           <label>
-            <span>Ảnh bìa (URL)</span>
-            <input type="text" name="coverImage" value="{{book.coverImage}}" />
+            <span>Ảnh bìa (upload từ máy)</span>
+            <input type="file" name="coverImage" accept="image/*" {{#unless book.coverImage}}required{{/unless}} />
+            {{#if book.coverImage}}
+              <small>Ảnh hiện tại:</small>
+              <div class="admin-book-form__preview">
+                <img src="{{book.coverImage}}" alt="Ảnh bìa hiện tại" />
+              </div>
+            {{/if}}
           </label>
 
           <label>

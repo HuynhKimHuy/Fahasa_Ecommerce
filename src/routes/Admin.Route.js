@@ -3,17 +3,24 @@ import AdminController from "../controllers/AdminController.js";
 import { requireAdmin } from "../middlewares/auth.middleware.js";
 import OrderController from "../controllers/OrderController.js";
 import UserController from "../controllers/UserController.js";
+import multer from "multer";
 
 const AdminRoute = express.Router();
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB
+  },
+});
 
 AdminRoute.use(requireAdmin);
 
 AdminRoute.get("/", (req, res) => res.redirect("/admin/books"));
 AdminRoute.get("/books", AdminController.list);
 AdminRoute.get("/books/new", AdminController.showCreateForm);
-AdminRoute.post("/books", AdminController.create);
+AdminRoute.post("/books", upload.single("coverImage"), AdminController.create);
 AdminRoute.get("/books/:id/edit", AdminController.showEditForm);
-AdminRoute.post("/books/:id", AdminController.update);
+AdminRoute.post("/books/:id", upload.single("coverImage"), AdminController.update);
 AdminRoute.post("/books/:id/delete", AdminController.delete);
 AdminRoute.get("/orders", OrderController.adminList);
 AdminRoute.post("/orders/:id/status", OrderController.updateStatus);
