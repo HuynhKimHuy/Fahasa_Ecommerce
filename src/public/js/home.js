@@ -334,9 +334,37 @@ document.addEventListener("DOMContentLoaded", () => {
         return (firstItem?.offsetWidth ?? list.clientWidth) + gap;
       };
 
+      const easeInOutCubic = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+      let animationFrame;
+
+      const animateScroll = (target) => {
+        const maxScroll = Math.max(0, list.scrollWidth - list.clientWidth);
+        const clampedTarget = Math.min(Math.max(target, 0), maxScroll);
+        const start = list.scrollLeft;
+        const distance = clampedTarget - start;
+        const duration = 420;
+        const startTime = performance.now();
+
+        if (animationFrame) {
+          cancelAnimationFrame(animationFrame);
+        }
+
+        const step = (now) => {
+          const elapsed = now - startTime;
+          const t = Math.min(elapsed / duration, 1);
+          const eased = easeInOutCubic(t);
+          list.scrollLeft = start + distance * eased;
+          if (t < 1) {
+            animationFrame = requestAnimationFrame(step);
+          }
+        };
+
+        animationFrame = requestAnimationFrame(step);
+      };
+
       const scrollByDir = (dir) => {
         const step = scrollStep();
-        list.scrollBy({ left: step * dir, behavior: "smooth" });
+        animateScroll(list.scrollLeft + step * dir);
       };
 
       prev?.addEventListener("click", () => scrollByDir(-1));

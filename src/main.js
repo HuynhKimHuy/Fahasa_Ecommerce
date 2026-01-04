@@ -78,7 +78,7 @@ app.engine('handlebars', hbs);
 app.set('view engine', 'handlebars');
 app.set('views', path.join(__dirname, 'resource/views'));
 
-const PORT = 5000
+const PORT = process.env.PORT || 5000;
 
 app.use(express.static(path.join(__dirname, 'public')))
 // ensure standalone JS assets are reachable even if current route adds prefixes
@@ -105,5 +105,5 @@ routeConfigs.forEach(({ path, handler }) => app.use(path, handler))
 
 // running sever
 app.listen(PORT, ()=>{
-    console.log("Sever running on PORT ",PORT);
+    console.log("Server running on PORT", PORT);
 })

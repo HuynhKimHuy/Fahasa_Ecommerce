@@ -1,8 +1,8 @@
 import Book from "../model/product.js";
 import { normalizeBookPrices, normalizeBooksList } from "../helpers/book.helper.js";
 
-class HomeController{
-    async index(req,res,next){
+class HomeController {
+    async index(req, res, next) {
         try {
             const flashSaleEnd = new Date();
             flashSaleEnd.setHours(23, 59, 59, 999);
@@ -109,18 +109,18 @@ class HomeController{
             const categoriesRaw = await Book.aggregate([
                 { $match: { isActive: true } },
                 {
-                  $group: {
-                    _id: "$category",
-                    coverImage: { $first: "$coverImage" },
-                  },
+                    $group: {
+                        _id: "$category",
+                        coverImage: { $first: "$coverImage" },
+                    },
                 },
                 { $sort: { _id: 1 } },
                 {
-                  $project: {
-                    _id: 0,
-                    name: "$_id",
-                    coverImage: 1,
-                  },
+                    $project: {
+                        _id: 0,
+                        name: "$_id",
+                        coverImage: 1,
+                    },
                 },
                 { $limit: 6 },
             ]);
@@ -148,41 +148,41 @@ class HomeController{
             });
         }
     }
-    async flashSale(req,res,next){
+    async flashSale(req, res, next) {
         try {
             const flashSaleEnd = new Date();
             flashSaleEnd.setHours(23, 59, 59, 999);
 
             const saleBooksRaw = await Book.find({ isFlashSale: true }).lean();
             const saleBooks = normalizeBooksList(saleBooksRaw);
-            return res.render('FlashSale',{ saleBooks, flashSaleEndTime: flashSaleEnd.toISOString() });
+            return res.render('FlashSale', { saleBooks, flashSaleEndTime: flashSaleEnd.toISOString() });
         } catch (error) {
             console.log('Cannot load flash sale page', error);
             next(error);
         }
     }
-    async giftPage(req,res,next){
+    async giftPage(req, res, next) {
         try {
             return res.render('GiftPage')
         } catch (error) {
             console.log("Cannot get GifCookie");
         }
     }
-    async show(req,res,next){
+    async show(req, res, next) {
         try {
             const { slug } = req.params;
             const bookRaw = await Book.findOne({ slug }).lean();
             const categories = await Book.distinct("category");
             const book = normalizeBookPrices(bookRaw);
-            if(!book){
+            if (!book) {
                 return res.status(404).render('CollectionDetail', {
-                    book:null,
-                    notFound:true,
+                    book: null,
+                    notFound: true,
                     slug,
                     categories,
                 });
             }
-            return res.render('CollectionDetail',{ book, categories });
+            return res.render('CollectionDetail', { book, categories });
         } catch (error) {
             console.log("Cannot load book detail", error);
             next(error);
