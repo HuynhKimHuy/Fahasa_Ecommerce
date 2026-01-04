@@ -28,6 +28,7 @@ const formatDateLabel = (value) => {
     day: "2-digit",
     month: "short",
     year: "numeric",
+    timeZone: "Asia/Ho_Chi_Minh",
   });
 };
 
@@ -186,7 +187,7 @@ class AdminController {
       }
       const filters = andFilters.length ? { $and: andFilters } : {};
 
-      const [allBooksRaw, filteredBooksRaw, categoriesRaw, ordersRaw] = await Promise.all([
+      const [allBooksRaw, filteredBooksRaw, categoriesRaw, ordersRaw, revenueAgg] = await Promise.all([
         Book.find().lean().sort({ createdAt: -1 }),
         Book.find(filters).lean().sort({ createdAt: -1 }),
         Book.aggregate([
@@ -202,11 +203,16 @@ class AdminController {
           { $sort: { _id: 1 } },
         ]),
         Order.find().lean().sort({ createdAt: -1 }).limit(10),
+        Order.aggregate([
+          { $match: { status: "completed" } },
+          { $group: { _id: null, total: { $sum: { $ifNull: ["$totalPrice", 0] } } } },
+        ]),
       ]);
 
       const allBooks = normalizeBooksList(allBooksRaw);
       const books = normalizeBooksList(filteredBooksRaw);
       const stats = buildStats(allBooks);
+      stats.totalRevenue = revenueAgg?.[0]?.total ?? 0;
       const recentBooks = buildRecentBooks(books);
       const statusMap = {
         pending: { label: "Đơn mới", tone: "warning", deliveryLabel: "Chưa giao", deliveryTone: "warning" },
@@ -220,7 +226,7 @@ class AdminController {
         return {
           ...order,
           createdAtLabel: order.createdAt
-            ? new Date(order.createdAt).toLocaleString("vi-VN", { hour12: false })
+            ? new Date(order.createdAt).toLocaleString("vi-VN", { hour12: false, timeZone: "Asia/Ho_Chi_Minh" })
             : "",
           statusLabel: statusInfo.label,
           statusTone: statusInfo.tone,

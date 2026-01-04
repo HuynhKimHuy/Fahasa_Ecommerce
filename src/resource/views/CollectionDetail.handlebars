@@ -41,7 +41,10 @@
                 <span>Nhà XB: <strong>{{book.publisher}}</strong></span>
               {{/if}}
             </p>
-            <p class="collection-detail__category">Danh mục: {{book.category}}</p>
+            <p class="collection-detail__category">
+              Danh mục:
+              <a href="/collection?category={{urlEncode book.category}}">{{book.category}}</a>
+            </p>
           </header>
 
           <div class="collection-detail__price-card">

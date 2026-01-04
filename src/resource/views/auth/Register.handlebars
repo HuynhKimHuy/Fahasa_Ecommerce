@@ -7,12 +7,23 @@
     </div>
 
     {{#if errors.length}}
-      <div class="auth-alert auth-alert--error">
-        <ul>
-          {{#each errors}}
-            <li>{{this}}</li>
-          {{/each}}
-        </ul>
+      <div class="alert-modal alert-modal--error is-visible" role="alert">
+        <div class="alert-modal__card">
+          <div class="alert-modal__icon">
+            <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+          </div>
+          <div class="alert-modal__content">
+            <p class="alert-modal__title">Không thể đăng ký</p>
+            <ul class="alert-modal__list">
+              {{#each errors}}
+                <li>{{this}}</li>
+              {{/each}}
+            </ul>
+          </div>
+          <button class="alert-modal__close" type="button" data-close-alert aria-label="Đóng thông báo">
+            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+          </button>
+        </div>
       </div>
     {{/if}}
 
@@ -24,7 +35,7 @@
       </label>
       <label class="auth-form__field">
         <span>Email</span>
-        <input type="email" name="email" value="{{email}}" placeholder="tên@domain.com" required />
+        <input type="email" name="email" value="{{email}}" placeholder="ten@domain.com" required inputmode="email" autocomplete="email" />
       </label>
       <label class="auth-form__field">
         <span>Mật khẩu</span>

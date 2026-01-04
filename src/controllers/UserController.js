@@ -3,6 +3,8 @@ import { hashPassword } from "../helpers/auth.helper.js";
 import mongoose from "mongoose";
 import Order from "../model/order.js";
 
+const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
 class UserController {
   async adminList(req, res, next) {
     try {
@@ -22,7 +24,7 @@ class UserController {
       const viewUsers = users.map((user) => ({
         ...user,
         createdAtLabel: user.createdAt
-          ? new Date(user.createdAt).toLocaleString("vi-VN", { hour12: false })
+          ? new Date(user.createdAt).toLocaleString("vi-VN", { hour12: false, timeZone: "Asia/Ho_Chi_Minh" })
           : "",
         statusLabel: user.isActive ? "Hoạt động" : "Đã khoá",
         statusTone: user.isActive ? "success" : "danger",
@@ -58,6 +60,7 @@ class UserController {
       const errors = [];
       if (!fullName) errors.push("Họ tên là bắt buộc.");
       if (!email) errors.push("Email là bắt buộc.");
+      if (email && !emailPattern.test(email)) errors.push("Email không đúng định dạng.");
       if (!password || password.length < 6) errors.push("Mật khẩu tối thiểu 6 ký tự.");
 
       if (errors.length) {
@@ -135,6 +138,9 @@ class UserController {
       const errors = [];
       if (!fullName) errors.push("Họ tên là bắt buộc.");
       if (!email) errors.push("Email là bắt buộc.");
+      if (email && !emailPattern.test(email)) {
+        errors.push("Email không đúng định dạng.");
+      }
       if (password && password.length > 0 && password.length < 6) {
         errors.push("Mật khẩu tối thiểu 6 ký tự.");
       }
@@ -215,7 +221,7 @@ class UserController {
       const orders = ordersRaw.map((order) => ({
         ...order,
         createdAtLabel: order.createdAt
-          ? new Date(order.createdAt).toLocaleString("vi-VN", { hour12: false })
+          ? new Date(order.createdAt).toLocaleString("vi-VN", { hour12: false, timeZone: "Asia/Ho_Chi_Minh" })
           : "",
         statusLabel: statusMap[order.status]?.label ?? "Đơn mới",
         statusTone: statusMap[order.status]?.tone ?? "warning",

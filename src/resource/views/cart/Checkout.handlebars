@@ -6,10 +6,23 @@
     </div>
 
     {{#if errors}}
-      <div class="alert alert--error">
-        {{#each errors}}
-          <p>{{this}}</p>
-        {{/each}}
+      <div class="alert-modal alert-modal--error is-visible" role="alert">
+        <div class="alert-modal__card">
+          <div class="alert-modal__icon">
+            <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+          </div>
+          <div class="alert-modal__content">
+            <p class="alert-modal__title">Không thể tạo đơn hàng</p>
+            <ul class="alert-modal__list">
+              {{#each errors}}
+                <li>{{this}}</li>
+              {{/each}}
+            </ul>
+          </div>
+          <button class="alert-modal__close" type="button" data-close-alert aria-label="Đóng thông báo">
+            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+          </button>
+        </div>
       </div>
     {{/if}}
 
@@ -22,16 +35,38 @@
         </label>
         <label>
           <span>Email</span>
-          <input type="email" name="email" value="{{form.email}}" required>
+          <input type="email" name="email" value="{{form.email}}" required inputmode="email" autocomplete="email">
         </label>
         <label>
           <span>Số điện thoại</span>
-          <input type="tel" name="phone" value="{{form.phone}}" required>
+          <input type="tel" name="phone" value="{{form.phone}}" required inputmode="tel" pattern="^(0|\\+84)(3[2-9]|5[6|8|9]|7[06-9]|8[1-5]|9[0-9])[0-9]{7}$" placeholder="0xx xxx xxxx">
         </label>
-        <label>
-          <span>Địa chỉ nhận hàng</span>
-          <input type="text" name="address" value="{{form.address}}" required>
-        </label>
+        <div class="checkout__address">
+          <label>
+            <span>Số nhà, đường</span>
+            <input type="text" name="detailAddress" value="{{form.detailAddress}}" required placeholder="Ví dụ: 12 Nguyễn Trãi">
+          </label>
+          <div class="checkout__address-grid">
+            <label>
+              <span>Tỉnh / Thành phố</span>
+              <select name="province" data-province-select data-selected="{{form.province}}" required>
+                <option value="">Chọn tỉnh / thành</option>
+              </select>
+            </label>
+            <label>
+              <span>Quận / Huyện</span>
+              <select name="district" data-district-select data-selected="{{form.district}}" required>
+                <option value="">Chọn quận / huyện</option>
+              </select>
+            </label>
+            <label>
+              <span>Phường / Xã</span>
+              <select name="ward" data-ward-select data-selected="{{form.ward}}" required>
+                <option value="">Chọn phường / xã</option>
+              </select>
+            </label>
+          </div>
+        </div>
         <label>
           <span>Ghi chú</span>
           <textarea name="note" rows="3">{{form.note}}</textarea>
@@ -54,20 +89,24 @@
 
       <aside class="checkout__summary card">
         <h2>Đơn hàng của bạn</h2>
-        <div class="checkout__items">
-          {{#each cart.items}}
-            <div class="checkout__item">
-              <div class="checkout__thumb">
-                <img src="{{this.product.coverImage}}" alt="{{this.product.title}}">
+        {{#if cart.items.length}}
+          <div class="checkout__items">
+            {{#each cart.items}}
+              <div class="checkout__item">
+                <div class="checkout__thumb">
+                  <img src="{{this.product.coverImage}}" alt="{{this.product.title}}">
+                </div>
+                <div class="checkout__item-info">
+                  <p class="checkout__item-title">{{this.product.title}}</p>
+                  <p class="checkout__item-meta">{{this.qty}} x {{formatPrice this.price}}</p>
+                </div>
+                <div class="checkout__item-total">{{formatPrice this.totalItemPrice}}</div>
               </div>
-              <div class="checkout__item-info">
-                <p class="checkout__item-title">{{this.product.title}}</p>
-                <p class="checkout__item-meta">{{this.qty}} x {{formatPrice this.price}}</p>
-              </div>
-              <div class="checkout__item-total">{{formatPrice this.totalItemPrice}}</div>
-            </div>
-          {{/each}}
-        </div>
+            {{/each}}
+          </div>
+        {{else}}
+          <p class="checkout__empty">Giỏ hàng chưa có sản phẩm.</p>
+        {{/if}}
         <div class="checkout__total">
           <span>Tổng cộng</span>
           <strong>{{formatPrice cart.totalPrice}}</strong>

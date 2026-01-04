@@ -49,15 +49,17 @@ class CollectionsController {
             if (!bookRaw) {
                 bookRaw = await Book.findOne({ slug }).lean();
             }
+            const categories = await Book.distinct('category');
             const book = normalizeBookPrices(bookRaw);
             if (!book) {
                 return res.status(404).render('CollectionDetail', {
                     book: null,
                     notFound: true,
                     slug,
+                    categories,
                 });
             }
-            return res.render('CollectionDetail', { book });
+            return res.render('CollectionDetail', { book, categories });
         } catch (error) {
             console.error('Unable to load book detail', error);
             next(error);

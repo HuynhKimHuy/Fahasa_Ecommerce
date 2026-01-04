@@ -1,42 +1,71 @@
 document.addEventListener("DOMContentLoaded", () => {
+  const setupAlertModals = () => {
+    const modals = document.querySelectorAll(".alert-modal");
+    if (!modals.length) return;
+
+    const closeModal = (modal) => {
+      modal.classList.add("is-hiding");
+      setTimeout(() => modal.remove(), 180);
+    };
+
+    document.querySelectorAll("[data-close-alert]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const modal = button.closest(".alert-modal");
+        if (modal) closeModal(modal);
+      });
+    });
+
+    modals.forEach((modal) => {
+      modal.addEventListener("click", (event) => {
+        if (event.target === modal) {
+          closeModal(modal);
+        }
+      });
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        modals.forEach((modal) => closeModal(modal));
+      }
+    });
+  };
+
   const slideWrap = document.querySelector(".promo-slide-wrap");
   const sliderTrack = slideWrap?.querySelector(".js-promo-slider");
   const slides = sliderTrack?.querySelectorAll(".promo-slider__item") ?? [];
   const prevBtn = slideWrap?.querySelector(".js-promo-prev");
   const nextBtn = slideWrap?.querySelector(".js-promo-next");
 
-  if (!sliderTrack || slides.length === 0) {
-    return;
+  if (sliderTrack && slides.length) {
+    let activeIndex = 0;
+
+    const updateSlide = () => {
+      sliderTrack.style.transform = `translateX(-${activeIndex * 100}%)`;
+    };
+
+    const goToPrev = () => {
+      activeIndex = (activeIndex - 1 + slides.length) % slides.length;
+      updateSlide();
+    };
+
+    const goToNext = () => {
+      activeIndex = (activeIndex + 1) % slides.length;
+      updateSlide();
+    };
+    // ⭐ TỰ ĐỘNG CHẠY SAU VÀI GIÂY
+    const AUTO_DELAY = 3000; // 3000ms = 3 giây
+
+    const autoPlay = () => {
+      setInterval(() => {
+        goToNext(); // mỗi lần gọi là nhảy sang slide kế tiếp
+      }, AUTO_DELAY);
+    };
+
+    autoPlay();
+
+    prevBtn?.addEventListener("click", goToPrev);
+    nextBtn?.addEventListener("click", goToNext);
   }
-
-  let activeIndex = 0;
-
-  const updateSlide = () => {
-    sliderTrack.style.transform = `translateX(-${activeIndex * 100}%)`;
-  };
-
-  const goToPrev = () => {
-    activeIndex = (activeIndex - 1 + slides.length) % slides.length;
-    updateSlide();
-  };
-
-  const goToNext = () => {
-    activeIndex = (activeIndex + 1) % slides.length;
-    updateSlide();
-  };
-  // ⭐ TỰ ĐỘNG CHẠY SAU VÀI GIÂY
-  const AUTO_DELAY = 3000; // 3000ms = 3 giây
-
-  const autoPlay = () => {
-    setInterval(() => {
-      goToNext(); // mỗi lần gọi là nhảy sang slide kế tiếp
-    }, AUTO_DELAY);
-  };
-
-  autoPlay();
-
-  prevBtn?.addEventListener("click", goToPrev);
-  nextBtn?.addEventListener("click", goToNext);
 
   const flashSaleWrap = document.querySelector(".flash-sale__carousel");
   const flashSaleList = flashSaleWrap?.querySelector(".js-flash-sale-list");
@@ -126,6 +155,95 @@ document.addEventListener("DOMContentLoaded", () => {
         closeDrawer();
       }
     });
+  };
+
+  const setupAddressPicker = () => {
+    const provinceSelect = document.querySelector("[data-province-select]");
+    const districtSelect = document.querySelector("[data-district-select]");
+    const wardSelect = document.querySelector("[data-ward-select]");
+    if (!provinceSelect || !districtSelect || !wardSelect) return;
+
+    const savedProvince = provinceSelect.getAttribute("data-selected") || provinceSelect.value;
+    const savedDistrict = districtSelect.getAttribute("data-selected") || districtSelect.value;
+    const savedWard = wardSelect.getAttribute("data-selected") || wardSelect.value;
+
+    const setOptions = (select, items, placeholder) => {
+      const current = select.value;
+      select.innerHTML = `<option value="">${placeholder}</option>`;
+      items.forEach((item) => {
+        const option = document.createElement("option");
+        option.value = item.name;
+        option.textContent = item.name;
+        if (item.name === current || item.name === select.getAttribute("data-selected")) {
+          option.selected = true;
+        }
+        select.appendChild(option);
+      });
+      select.disabled = items.length === 0;
+    };
+
+    const fetchJSON = async (url) => {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error("Fetch failed");
+      return res.json();
+    };
+
+    const API_ROOT = "https://provinces.open-api.vn/api/?depth=3";
+
+    fetchJSON(API_ROOT)
+      .then((data) => {
+        const provinces = data ?? [];
+        setOptions(provinceSelect, provinces, "Chọn tỉnh / thành");
+
+        const renderDistricts = (provinceName) => {
+          const province = provinces.find((p) => p.name === provinceName);
+          const districts = province?.districts ?? [];
+          setOptions(districtSelect, districts, "Chọn quận / huyện");
+          setOptions(wardSelect, [], "Chọn phường / xã");
+          if (districts.length) {
+            const districtToSelect = districts.find((d) => d.name === savedDistrict);
+            if (districtToSelect) {
+              districtSelect.value = districtToSelect.name;
+              renderWards(districtToSelect.name, districts);
+            }
+          }
+        };
+
+        const renderWards = (districtName, districts) => {
+          const district = (districts ?? []).find((d) => d.name === districtName);
+          const wards = district?.wards ?? [];
+          setOptions(wardSelect, wards, "Chọn phường / xã");
+          if (wards.length && savedWard) {
+            const wardToSelect = wards.find((w) => w.name === savedWard);
+            if (wardToSelect) {
+              wardSelect.value = wardToSelect.name;
+            }
+          }
+        };
+
+        provinceSelect.addEventListener("change", () => {
+          districtSelect.value = "";
+          wardSelect.value = "";
+          renderDistricts(provinceSelect.value);
+        });
+
+        districtSelect.addEventListener("change", () => {
+          wardSelect.value = "";
+          const province = provinces.find((p) => p.name === provinceSelect.value);
+          renderWards(districtSelect.value, province?.districts ?? []);
+        });
+
+        if (savedProvince) {
+          provinceSelect.value = savedProvince;
+          renderDistricts(savedProvince);
+        }
+      })
+      .catch(() => {
+        provinceSelect.disabled = districtSelect.disabled = wardSelect.disabled = true;
+        provinceSelect.innerHTML = `<option value=\"\">Không tải được danh sách tỉnh thành</option>`;
+        districtSelect.innerHTML = `<option value=\"\">Hãy nhập thủ công</option>`;
+        wardSelect.innerHTML = `<option value=\"\">Hãy nhập thủ công</option>`;
+      });
   };
 
   const setupAccordions = () => {
@@ -226,10 +344,58 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   };
 
+  const setupCartAutoUpdate = () => {
+    const forms = document.querySelectorAll(".js-cart-update");
+    if (!forms.length) return;
+
+    forms.forEach((form) => {
+      const input = form.querySelector(".js-cart-qty");
+      if (!input) return;
+      let timer;
+      const submitForm = () => {
+        if (timer) {
+          clearTimeout(timer);
+        }
+        timer = setTimeout(() => {
+          if (typeof form.requestSubmit === "function") {
+            form.requestSubmit();
+          } else {
+            form.submit();
+          }
+        }, 250);
+      };
+
+      input.addEventListener("input", submitForm);
+      input.addEventListener("change", submitForm);
+    });
+  };
+
+  const setupPaymentNotice = () => {
+    const paymentRadios = document.querySelectorAll('input[name="paymentMethod"]');
+    if (!paymentRadios.length) return;
+
+    const codRadio = Array.from(paymentRadios).find((el) => el.value === "cod");
+
+    paymentRadios.forEach((radio) => {
+      radio.addEventListener("change", () => {
+        if (radio.value === "card" && radio.checked) {
+          window.alert("Hiện tại chưa hỗ trợ thanh toán online. Vui lòng chọn COD.");
+          if (codRadio) {
+            codRadio.checked = true;
+          }
+        }
+      });
+    });
+  };
+
   setupMobileDrawer();
+  setupAlertModals();
   setupAccordions();
   setupFlashSaleCountdown();
   setupCategoryCarousels();
+  setupPaymentNotice();
+  setupCartAutoUpdate();
+  setupAddressPicker();
 });
 const snowContainer = document.getElementById("snow-container");
 

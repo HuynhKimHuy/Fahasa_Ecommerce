@@ -26,9 +26,15 @@ export default class Cart {
   }
 
   // Cập nhật số lượng 1 item
-  update(bookId, newQty) {
+  update(bookId, newQty, book) {
     const item = this.items[bookId]
     if (!item) return
+
+    if (book) {
+      const latestPrice = book.newPrice ?? book.price ?? book.oldPrice ?? item.price ?? 0
+      item.price = latestPrice
+      item.item = book
+    }
 
     // Trừ số cũ khỏi tổng
     this.totalQty -= item.qty

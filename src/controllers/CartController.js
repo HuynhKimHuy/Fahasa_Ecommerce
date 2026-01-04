@@ -3,7 +3,7 @@ import Book from "../model/product.js"
 import {
   getCartFromSession,
   saveCartToSession,
-  getCartViewModel,
+  refreshCartWithLatestPrices,
 } from "../helpers/cart.helper.js"
 
 export const addToCart = async (req, res) => {
@@ -33,12 +33,15 @@ export const addToCart = async (req, res) => {
   }
 }
 
-export const showCart = (req, res) => {
-  const cartVM = getCartViewModel(req)
-
-  res.render("cart/Cart", {
-    cart: cartVM,
-  })
+export const showCart = async (req, res, next) => {
+  try {
+    const cartVM = await refreshCartWithLatestPrices(req)
+    res.render("cart/Cart", {
+      cart: cartVM,
+    })
+  } catch (error) {
+    next(error)
+  }
 }
 
 // Update số lượng 1 item
@@ -46,11 +49,15 @@ export const updateCartItem = (req, res) => {
   const { bookId } = req.params
   const { qty } = req.body // nhớ name="qty" trong form
 
-  const cart = getCartFromSession(req)
-  cart.update(bookId, Number(qty))
-  saveCartToSession(req, cart)
-
-  return res.redirect("/cart")
+  return Book.findById(bookId)
+    .lean()
+    .then((book) => {
+      const cart = getCartFromSession(req)
+      cart.update(bookId, Number(qty), book)
+      saveCartToSession(req, cart)
+      return res.redirect("/cart")
+    })
+    .catch(() => res.redirect("/cart"))
 }
 
 // Xoá 1 item

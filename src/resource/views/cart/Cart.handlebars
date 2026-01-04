@@ -28,9 +28,9 @@
                     <p class="cart-item__author">{{this.product.author}}</p>
                     <span class="cart-item__price">{{formatPrice this.price}}</span>
                   </div>
-                  <form class="cart-item__qty" method="post" action="/cart/update/{{this.bookId}}">
-                    <input type="number" name="qty" min="0" value="{{this.qty}}">
-                    <button type="submit">Cập nhật</button>
+                  <form class="cart-item__qty js-cart-update" method="post" action="/cart/update/{{this.bookId}}">
+                    <input class="js-cart-qty" type="number" name="qty" min="0" value="{{this.qty}}" step="1">
+                    <button type="submit" class="js-cart-update-btn">Cập nhật</button>
                   </form>
                   <div class="cart-item__total">{{formatPrice this.totalItemPrice}}</div>
                   <form class="cart-item__remove" method="post" action="/cart/remove/{{this.bookId}}">

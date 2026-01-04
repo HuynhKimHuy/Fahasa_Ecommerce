@@ -104,6 +104,12 @@
     </div>
 
     <div class="mobile-drawer__body">
+      <form action="/search" class="mobile-search">
+        <input type="text" name="q" placeholder="Bạn muốn mua gì" value="{{searchQuery}}" />
+        <button type="submit" aria-label="Tìm kiếm">
+          <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
+      </form>
       <div class="mobile-accordion" data-accordion>
         <button class="mobile-accordion__trigger" type="button" data-accordion-toggle>
           <span>Danh mục</span>

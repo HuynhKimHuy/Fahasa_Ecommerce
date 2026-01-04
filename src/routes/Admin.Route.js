@@ -4,6 +4,7 @@ import { requireAdmin } from "../middlewares/auth.middleware.js";
 import OrderController from "../controllers/OrderController.js";
 import UserController from "../controllers/UserController.js";
 import multer from "multer";
+import Book from "../model/product.js";
 
 const AdminRoute = express.Router();
 const upload = multer({
@@ -14,6 +15,21 @@ const upload = multer({
 });
 
 AdminRoute.use(requireAdmin);
+
+// Provide categories to header/nav on all admin pages
+AdminRoute.use(async (req, res, next) => {
+  try {
+    const categoriesRaw = await Book.distinct("category");
+    res.locals.categories = (categoriesRaw || []).map((name) => ({
+      name: typeof name === "string" ? name : "",
+      value: typeof name === "string" ? name : "",
+    }));
+  } catch (error) {
+    console.error("Cannot preload categories for admin nav:", error);
+    res.locals.categories = [];
+  }
+  next();
+});
 
 AdminRoute.get("/", (req, res) => res.redirect("/admin/books"));
 AdminRoute.get("/books", AdminController.list);

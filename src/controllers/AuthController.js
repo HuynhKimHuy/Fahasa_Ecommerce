@@ -15,6 +15,8 @@ const buildSessionUser = (user) => ({
   role: user.role,
 });
 
+const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
 class AuthController {
   constructor() {
     this.renderLogin = this.renderLogin.bind(this);
@@ -76,6 +78,13 @@ class AuthController {
           redirect: redirectTarget,
         });
       }
+      if (email && !emailPattern.test(email)) {
+        return this.renderLogin(res, {
+          error: "Email không đúng định dạng. Vui lòng kiểm tra lại.",
+          email,
+          redirect: redirectTarget,
+        });
+      }
 
       const user = await User.findOne({ email });
       if (!user || !verifyPassword(password, user.passwordHash)) {
@@ -132,6 +141,8 @@ class AuthController {
       }
       if (!email) {
         errors.push("Email là bắt buộc.");
+      } else if (!emailPattern.test(email)) {
+        errors.push("Email không đúng định dạng.");
       }
       if (!password) {
         errors.push("Mật khẩu là bắt buộc.");

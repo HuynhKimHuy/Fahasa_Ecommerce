@@ -158,8 +158,8 @@
     </aside>
 
     <div class="admin-main">
-      <section class="admin-filters-card">
-        <form class="admin-filters" action="/admin/books" method="get">
+      <section class="admin-filters-card admin-filters-card--compact">
+        <form class="admin-filters admin-filters--compact" action="/admin/books" method="get">
           <label class="admin-filters__field">
             <span>Tìm kiếm</span>
             <input type="text" name="q" value="{{filters.q}}" placeholder="Tên sách, tác giả, slug..." />
@@ -167,15 +167,15 @@
           <label class="admin-filters__field">
             <span>Danh mục</span>
             <select name="category">
-              <option value="all">Tất cả danh mục</option>
+              <option value="all">Tất cả</option>
               {{#each categories}}
                 <option value="{{this.value}}" {{#if (eq ../filters.category this.value)}}selected{{/if}}>
-                  {{this.name}} ({{this.total}})
+                  {{this.name}}
                 </option>
               {{/each}}
             </select>
           </label>
-          <label class="admin-filters__field">
+          <label class="admin-filters__field admin-filters__field--inline">
             <span>Trạng thái</span>
             <select name="status">
               {{#each statusOptions}}
@@ -186,8 +186,8 @@
             </select>
           </label>
           <div class="admin-filters__actions">
-            <button type="submit" class="btn btn--primary">Áp dụng</button>
-            <a href="/admin/books" class="btn btn--text">Xóa lọc</a>
+            <button type="submit" class="btn btn--primary">Lọc</button>
+            <a href="/admin/books" class="btn btn--text">Clear</a>
           </div>
         </form>
       </section>

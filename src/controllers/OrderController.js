@@ -1,17 +1,30 @@
 import mongoose from "mongoose";
 import Order from "../model/order.js";
 import Book from "../model/product.js";
-import { getCartViewModel, getCartFromSession, saveCartToSession } from "../helpers/cart.helper.js";
+import { refreshCartWithLatestPrices } from "../helpers/cart.helper.js";
+
+const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+const vnPhonePattern = /^(0|\+84)(3[2-9]|5[6|8|9]|7[06-9]|8[1-5]|9[0-9])[0-9]{7}$/;
 
 class OrderController {
   async checkout(req, res) {
-    const cart = getCartViewModel(req);
+    const cart = await refreshCartWithLatestPrices(req);
     if (!cart.items.length) {
       return res.redirect("/cart");
     }
     return res.render("cart/Checkout", {
       cart,
-      form: { customerName: "", email: "", phone: "", address: "", note: "", paymentMethod: "cod" },
+      form: {
+        customerName: "",
+        email: "",
+        phone: "",
+        detailAddress: "",
+        province: "",
+        district: "",
+        ward: "",
+        note: "",
+        paymentMethod: "cod",
+      },
     });
   }
 
@@ -19,7 +32,7 @@ class OrderController {
     let cart = null;
     let session = null;
     try {
-      cart = getCartViewModel(req);
+      cart = await refreshCartWithLatestPrices(req);
       if (!cart.items.length) {
         return res.redirect("/cart");
       }
@@ -27,15 +40,31 @@ class OrderController {
       const customerName = req.body.customerName?.trim() || "";
       const email = req.body.email?.trim() || "";
       const phone = req.body.phone?.trim() || "";
-      const address = req.body.address?.trim() || "";
+      const detailAddress = req.body.detailAddress?.trim() || req.body.address?.trim() || "";
+      const province = req.body.province?.trim() || "";
+      const district = req.body.district?.trim() || "";
+      const ward = req.body.ward?.trim() || "";
       const note = req.body.note?.trim() || "";
       const paymentMethod = req.body.paymentMethod === "card" ? "card" : "cod";
 
-      if (!customerName || !email || !phone || !address) {
+      const errors = [];
+      if (!customerName || !email || !phone || !detailAddress || !province || !district || !ward) {
+        errors.push("Vui lòng điền đầy đủ thông tin nhận hàng.");
+      }
+      if (email && !emailPattern.test(email)) {
+        errors.push("Email không đúng định dạng. Vui lòng nhập theo mẫu ten@domain.com.");
+      }
+      if (phone && !vnPhonePattern.test(phone)) {
+        errors.push("Số điện thoại phải thuộc định dạng Việt Nam (bắt đầu bằng 0 hoặc +84).");
+      }
+      const addressParts = [detailAddress, ward, district, province].map((part) => part.trim()).filter(Boolean);
+      const address = addressParts.join(", ");
+
+      if (errors.length) {
         return res.render("cart/Checkout", {
           cart,
-          errors: ["Vui lòng điền đầy đủ thông tin nhận hàng"],
-          form: { customerName, email, phone, address, note, paymentMethod },
+          errors,
+          form: { customerName, email, phone, detailAddress, province, district, ward, note, paymentMethod },
         });
       }
 
@@ -87,6 +116,9 @@ class OrderController {
             email,
             phone,
             address,
+            province,
+            district,
+            ward,
             note,
             paymentMethod,
             totalQty: cart.totalQty,
@@ -117,13 +149,16 @@ class OrderController {
 
       if (error?.code === "OUT_OF_STOCK") {
         return res.render("cart/Checkout", {
-          cart: cart ?? getCartViewModel(req),
+          cart: cart ?? (await refreshCartWithLatestPrices(req)),
           errors: [error.message],
           form: {
             customerName: req.body.customerName,
             email: req.body.email,
             phone: req.body.phone,
-            address: req.body.address,
+            detailAddress: req.body.detailAddress ?? req.body.address,
+            province: req.body.province,
+            district: req.body.district,
+            ward: req.body.ward,
             note: req.body.note,
             paymentMethod: req.body.paymentMethod,
           },
@@ -172,7 +207,7 @@ class OrderController {
           ...order,
           items,
           createdAtLabel: order.createdAt
-            ? new Date(order.createdAt).toLocaleString("vi-VN", { hour12: false })
+            ? new Date(order.createdAt).toLocaleString("vi-VN", { hour12: false, timeZone: "Asia/Ho_Chi_Minh" })
             : "",
           statusLabel: statusInfo.label,
           statusTone: statusInfo.tone,
