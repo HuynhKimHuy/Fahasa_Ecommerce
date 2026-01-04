@@ -112,10 +112,18 @@ class OrderController {
       const [order] = await Order.create(
         [
           {
+            user: req.session?.user?.id,
             customerName,
             email,
             phone,
             address,
+            shipping: {
+              detailAddress,
+              ward,
+              district,
+              province,
+              fullAddress: address,
+            },
             province,
             district,
             ward,

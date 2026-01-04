@@ -15,12 +15,25 @@ const OrderItemSchema = new Schema(
   { _id: false }
 );
 
+const ShippingSchema = new Schema(
+  {
+    detailAddress: { type: String, required: true, trim: true },
+    ward: { type: String, trim: true, default: "" },
+    district: { type: String, trim: true, default: "" },
+    province: { type: String, trim: true, default: "" },
+    fullAddress: { type: String, required: true, trim: true },
+  },
+  { _id: false }
+);
+
 const OrderSchema = new Schema(
   {
+    user: { type: Schema.Types.ObjectId, ref: "user", index: true },
     customerName: { type: String, required: true, trim: true },
     email: { type: String, required: true, trim: true },
     phone: { type: String, required: true, trim: true },
     address: { type: String, required: true, trim: true },
+    shipping: { type: ShippingSchema, required: true },
     note: { type: String, trim: true, default: "" },
     totalQty: { type: Number, required: true },
     totalPrice: { type: Number, required: true },
@@ -38,6 +51,8 @@ const OrderSchema = new Schema(
   },
   { collection: COLLECTION_NAME, timestamps: true }
 );
+
+OrderSchema.index({ status: 1, createdAt: -1 });
 
 const Order = mongoose.model(DOCUMENT_NAME, OrderSchema);
 

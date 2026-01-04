@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Fahasa favicon">
+  <defs>
+    <clipPath id="round">
+      <rect width="512" height="512" rx="96" ry="96"/>
+    </clipPath>
+  </defs>
+  <g clip-path="url(#round)">
+    <rect width="512" height="512" fill="#c51d26"/>
+    <ellipse cx="256" cy="240" rx="150" ry="172" fill="#ffffff"/>
+    <g transform="translate(0,-12)">
+      <circle cx="210" cy="214" r="28" fill="none" stroke="#c51d26" stroke-width="14"/>
+      <circle cx="302" cy="214" r="28" fill="none" stroke="#c51d26" stroke-width="14"/>
+      <rect x="238" y="206" width="36" height="12" fill="#c51d26"/>
+      <rect x="180" y="204" width="12" height="20" fill="#c51d26" rx="4"/>
+      <rect x="320" y="204" width="12" height="20" fill="#c51d26" rx="4"/>
+    </g>
+    <ellipse cx="256" cy="282" rx="16" ry="14" fill="#c51d26"/>
+  </g>
+</svg>

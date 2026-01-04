@@ -51,11 +51,6 @@ const BookSchema = new Schema(
       type: Number,
     },
 
-    // phàn trăm giảm giá
-    discountPercent:{
-      type:Number,
-    },
-    
     // Giá gốc
     oldPrice: {
       type: Number,
@@ -66,12 +61,6 @@ const BookSchema = new Schema(
     newPrice: {
       type: Number,
       required: true,
-    },
-
-    // giảm giá 
-    discountPercent: {
-      type: Number,
-      default: 0,
     },
 
     // Đã bán 
@@ -143,6 +132,9 @@ const BookSchema = new Schema(
     timestamps: true,
   }
 );
+
+BookSchema.index({ slug: 1 }, { unique: true });
+BookSchema.index({ category: 1 });
 
 const Book = mongoose.model(DOCUMENT_NAME, BookSchema);
 
