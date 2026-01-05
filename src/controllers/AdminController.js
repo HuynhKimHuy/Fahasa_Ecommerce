@@ -1,7 +1,7 @@
 import Book from "../model/product.js";
 import Order from "../model/order.js";
 import { normalizeBooksList } from "../helpers/book.helper.js";
-import cloudinary from "../config/cloudinary.js";
+import cloudinary, { isCloudinaryEnabled } from "../config/cloudinary.js";
 
 const createSlug = (value = "") =>
   value
@@ -141,6 +141,11 @@ const toText = (value, fallback = "") =>
 
 async function uploadCoverImage(file) {
   if (!file?.buffer?.length) return null;
+  if (!isCloudinaryEnabled) {
+    throw new Error(
+      "Cloudinary chưa được cấu hình. Vui lòng thiết lập CLOUDINARY_URL hoặc CLOUDINARY_CLOUD_NAME/API_KEY/API_SECRET."
+    );
+  }
   const dataUri = `data:${file.mimetype || "image/jpeg"};base64,${file.buffer.toString("base64")}`;
   const result = await cloudinary.uploader.upload(dataUri, {
     folder: CLOUDINARY_FOLDER,

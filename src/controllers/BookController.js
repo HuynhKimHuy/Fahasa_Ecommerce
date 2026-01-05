@@ -1,5 +1,5 @@
 import Book from "../model/product.js";
-import cloudinary from "../config/cloudinary.js";
+import cloudinary, { isCloudinaryEnabled } from "../config/cloudinary.js";
 
 const CLOUDINARY_FOLDER = "stories";
 
@@ -32,6 +32,11 @@ const createSlug = (value = "") =>
 
 async function uploadCoverImage({ file }) {
   if (!file?.buffer?.length) return null;
+  if (!isCloudinaryEnabled) {
+    throw new Error(
+      "Cloudinary chưa được cấu hình. Vui lòng thiết lập CLOUDINARY_URL hoặc CLOUDINARY_CLOUD_NAME/API_KEY/API_SECRET."
+    );
+  }
   const dataUri = `data:${file.mimetype || "image/jpeg"};base64,${file.buffer.toString("base64")}`;
   const result = await cloudinary.uploader.upload(dataUri, {
     folder: CLOUDINARY_FOLDER,

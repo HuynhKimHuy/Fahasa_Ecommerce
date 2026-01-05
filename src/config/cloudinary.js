@@ -14,20 +14,25 @@ const CLOUD_NAME = (process.env.CLOUDINARY_CLOUD_NAME || "").trim();
 const API_KEY = (process.env.CLOUDINARY_API_KEY || "").trim();
 const API_SECRET = (process.env.CLOUDINARY_API_SECRET || "").trim();
 
-if (CLOUDINARY_URL) {
-  cloudinary.config(CLOUDINARY_URL);
-} else {
-  if (!CLOUD_NAME || !API_KEY || !API_SECRET) {
-    throw new Error(
-      "Missing Cloudinary credentials. Set CLOUDINARY_URL or CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET in src/.env"
-    );
+const isCloudinaryEnabled =
+  Boolean(CLOUDINARY_URL) || (Boolean(CLOUD_NAME) && Boolean(API_KEY) && Boolean(API_SECRET));
+
+if (isCloudinaryEnabled) {
+  if (CLOUDINARY_URL) {
+    cloudinary.config(CLOUDINARY_URL);
+  } else {
+    cloudinary.config({
+      cloud_name: CLOUD_NAME,
+      api_key: API_KEY,
+      api_secret: API_SECRET,
+      secure: true,
+    });
   }
-  cloudinary.config({
-    cloud_name: CLOUD_NAME,
-    api_key: API_KEY,
-    api_secret: API_SECRET,
-    secure: true,
-  });
+} else {
+  console.warn(
+    "[cloudinary] Missing credentials. Upload endpoints will be disabled until CLOUDINARY_URL or CLOUDINARY_CLOUD_NAME/API_KEY/API_SECRET are set."
+  );
 }
 
+export { isCloudinaryEnabled };
 export default cloudinary;
