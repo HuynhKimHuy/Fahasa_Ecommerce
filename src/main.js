@@ -23,6 +23,9 @@ ConnectDB.getInstance();
 const app = express()
 import { Router } from 'express';
 
+const HOST = "0.0.0.0";
+const PORT = process.env.PORT || 5000;
+
 app.use(express.json())
 app.use(compression())
 app.use(morgan('combined'))
@@ -78,11 +81,14 @@ app.engine('handlebars', hbs);
 app.set('view engine', 'handlebars');
 app.set('views', path.join(__dirname, 'resource/views'));
 
-const PORT = process.env.PORT || 5000;
-
 app.use(express.static(path.join(__dirname, 'public')))
 // ensure standalone JS assets are reachable even if current route adds prefixes
 app.use('/js', express.static(path.join(__dirname, 'public/js')))
+
+// lightweight health endpoint for platform checks
+app.get("/health", (_req, res) => {
+  res.status(200).json({ status: "ok" });
+});
 
 app.get("/search", (req, res) => {
   const q = typeof req.query.q === "string" ? req.query.q.trim() : "";
@@ -104,6 +110,6 @@ const routeConfigs = [
 routeConfigs.forEach(({ path, handler }) => app.use(path, handler))
 
 // running sever
-app.listen(PORT, ()=>{
-    console.log("Server running on PORT", PORT);
+app.listen(PORT, HOST, ()=>{
+    console.log(`Server running on http://${HOST}:${PORT}`);
 })
