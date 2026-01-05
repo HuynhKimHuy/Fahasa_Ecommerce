@@ -17,6 +17,12 @@ const AddressSchema = new Schema(
   { _id: false }
 );
 
+const normalizePhone = (value) => {
+  if (value === undefined || value === null) return undefined;
+  const trimmed = String(value).trim();
+  return trimmed.length ? trimmed : undefined;
+};
+
 const UserSchema = new Schema(
   {
     fullName: {
@@ -35,8 +41,9 @@ const UserSchema = new Schema(
     phone: {
       type: String,
       trim: true,
-      default: "",
+      default: undefined,
       match: /^(0|\+84)[0-9]{8,10}$/,
+      set: normalizePhone,
     },
     passwordHash: {
       type: String,
@@ -67,6 +74,11 @@ const UserSchema = new Schema(
     timestamps: true,
   }
 );
+
+UserSchema.pre("save", function (next) {
+  this.phone = normalizePhone(this.phone);
+  next();
+});
 
 UserSchema.index({ email: 1 }, { unique: true });
 UserSchema.index({ phone: 1 }, { unique: true, sparse: true });

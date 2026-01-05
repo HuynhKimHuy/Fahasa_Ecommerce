@@ -197,8 +197,12 @@
 
                       <div class="category-slider__rating">
                         <i class="fa-solid fa-star"></i>
-                        <span>{{#if this.rating}}{{this.rating}}{{else}}4.8{{/if}}</span>
-                        <span class="category-slider__rating-count">/5</span>
+                        {{#if this.hasRating}}
+                          <span>{{this.ratingLabel}}</span>
+                          <span class="category-slider__rating-count">/5 · {{this.ratingCount}} đánh giá</span>
+                        {{else}}
+                          <span class="category-slider__rating-count">Chưa có đánh giá</span>
+                        {{/if}}
                       </div>
 
                       <div class="flash-sale__price-row">

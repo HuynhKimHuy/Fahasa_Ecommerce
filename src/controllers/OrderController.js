@@ -1,20 +1,47 @@
 import mongoose from "mongoose";
 import Order from "../model/order.js";
 import Book from "../model/product.js";
+import User from "../model/user.js";
 import { refreshCartWithLatestPrices } from "../helpers/cart.helper.js";
 
 const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const vnPhonePattern = /^(0|\+84)(3[2-9]|5[6|8|9]|7[06-9]|8[1-5]|9[0-9])[0-9]{7}$/;
+const LOCKED_USER_MESSAGE =
+  "Tài khoản của bạn đang bị khoá. Vui lòng liên hệ quản trị viên trước khi đặt hàng.";
+
+async function getLockedUserError(req, email) {
+  const sessionUserId = req.session?.user?.id;
+  if (sessionUserId) {
+    if (!mongoose.Types.ObjectId.isValid(sessionUserId)) {
+      req.session.user = null;
+      return LOCKED_USER_MESSAGE;
+    }
+    const sessionUser = await User.findById(sessionUserId).select("_id isActive");
+    if (!sessionUser?.isActive) {
+      req.session.user = null;
+      return LOCKED_USER_MESSAGE;
+    }
+  }
+
+  if (email) {
+    const accountByEmail = await User.findOne({ email }).select("_id isActive");
+    if (accountByEmail && !accountByEmail.isActive) {
+      return LOCKED_USER_MESSAGE;
+    }
+  }
+
+  return "";
+}
 
 class OrderController {
-  async checkout(req, res) {
-    const cart = await refreshCartWithLatestPrices(req);
-    if (!cart.items.length) {
-      return res.redirect("/cart");
-    }
-    return res.render("cart/Checkout", {
-      cart,
-      form: {
+  async checkout(req, res, next) {
+    try {
+      const cart = await refreshCartWithLatestPrices(req);
+      if (!cart.items.length) {
+        return res.redirect("/cart");
+      }
+
+      const form = {
         customerName: "",
         email: "",
         phone: "",
@@ -24,8 +51,24 @@ class OrderController {
         ward: "",
         note: "",
         paymentMethod: "cod",
-      },
-    });
+      };
+
+      const lockedError = await getLockedUserError(req);
+      if (lockedError) {
+        return res.render("cart/Checkout", {
+          cart,
+          errors: [lockedError],
+          form,
+        });
+      }
+
+      return res.render("cart/Checkout", {
+        cart,
+        form,
+      });
+    } catch (error) {
+      next(error);
+    }
   }
 
   async create(req, res, next) {
@@ -38,7 +81,7 @@ class OrderController {
       }
 
       const customerName = req.body.customerName?.trim() || "";
-      const email = req.body.email?.trim() || "";
+      const email = (req.body.email ?? "").trim().toLowerCase();
       const phone = req.body.phone?.trim() || "";
       const detailAddress = req.body.detailAddress?.trim() || req.body.address?.trim() || "";
       const province = req.body.province?.trim() || "";
@@ -48,6 +91,11 @@ class OrderController {
       const paymentMethod = req.body.paymentMethod === "card" ? "card" : "cod";
 
       const errors = [];
+      const lockedError = await getLockedUserError(req, email);
+      if (lockedError) {
+        errors.push(lockedError);
+      }
+
       if (!customerName || !email || !phone || !detailAddress || !province || !district || !ward) {
         errors.push("Vui lòng điền đầy đủ thông tin nhận hàng.");
       }

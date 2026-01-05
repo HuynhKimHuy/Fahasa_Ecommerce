@@ -45,6 +45,18 @@
               Danh mục:
               <a href="/collection?category={{urlEncode book.category}}">{{book.category}}</a>
             </p>
+            <div class="collection-detail__rating">
+              {{#if book.hasRating}}
+                <div class="rating-pill">
+                  <i class="fa-solid fa-star"></i>
+                  <strong>{{book.ratingLabel}}</strong>
+                  <span>/5</span>
+                </div>
+                <span class="rating-count">({{book.ratingCount}} đánh giá)</span>
+              {{else}}
+                <span class="rating-empty">Chưa có đánh giá</span>
+              {{/if}}
+            </div>
           </header>
 
           <div class="collection-detail__price-card">
@@ -115,6 +127,95 @@
               {{/if}}
             </div>
           </div>
+
+          <section class="collection-detail__reviews">
+            <header class="reviews__header">
+              <div>
+                <p class="reviews__eyebrow">Đánh giá & nhận xét</p>
+                <h3>Trải nghiệm của độc giả</h3>
+                <p class="reviews__subtitle">Chỉ nhận đánh giá 4 hoặc 5 sao để đảm bảo chất lượng nội dung.</p>
+              </div>
+              <div class="reviews__score">
+                {{#if book.hasRating}}
+                  <div class="reviews__score-main">
+                    <span class="reviews__score-number">{{book.ratingLabel}}</span>
+                    <span class="reviews__score-total">/5</span>
+                  </div>
+                  <div class="reviews__score-stars" aria-label="Điểm trung bình">
+                    <div class="rating-bar">
+                      <div class="rating-bar__fill" style="width: {{book.ratingFill}}%"></div>
+                    </div>
+                  </div>
+                  <p class="reviews__score-count">{{book.ratingCount}} đánh giá</p>
+                {{else}}
+                  <p class="reviews__score-empty">Chưa có đánh giá</p>
+                {{/if}}
+              </div>
+            </header>
+
+            {{#if flash.message}}
+              <div class="reviews__flash reviews__flash--{{flash.status}}">
+                {{flash.message}}
+              </div>
+            {{/if}}
+
+            <div class="reviews__grid">
+              <form class="review-form" action="/collection/{{book._id}}/reviews" method="post">
+                <h4>Chia sẻ trải nghiệm của bạn</h4>
+                <p>Chúng tôi chỉ hiển thị đánh giá 4 hoặc 5 sao để giữ chất lượng nội dung.</p>
+                <div class="review-form__rating">
+                  <label class="star-option">
+                    <input type="radio" name="rating" value="5" required>
+                    <span>
+                      <i class="fa-solid fa-star"></i>
+                      5 sao
+                    </span>
+                  </label>
+                  <label class="star-option">
+                    <input type="radio" name="rating" value="4" required>
+                    <span>
+                      <i class="fa-solid fa-star"></i>
+                      4 sao
+                    </span>
+                  </label>
+                </div>
+                <label class="review-form__field">
+                  <span>Họ tên</span>
+                  <input type="text" name="name" placeholder="Tên hiển thị" maxlength="120">
+                </label>
+                <label class="review-form__field">
+                  <span>Nội dung đánh giá</span>
+                  <textarea name="comment" rows="4" maxlength="2000" placeholder="Chia sẻ ngắn gọn cảm nhận của bạn (tuỳ chọn)"></textarea>
+                </label>
+                <button type="submit" class="btn btn--primary review-form__submit">Gửi đánh giá</button>
+              </form>
+
+              <div class="review-list">
+                {{#if reviews.length}}
+                  {{#each reviews}}
+                    <article class="review-card">
+                      <div class="review-card__top">
+                        <div class="review-card__avatar">{{this.initial}}</div>
+                        <div>
+                          <p class="review-card__name">{{this.displayName}}</p>
+                          <p class="review-card__meta">{{this.createdAtLabel}}</p>
+                        </div>
+                        <div class="review-card__rating">
+                          <i class="fa-solid fa-star"></i>
+                          <span>{{this.rating}}</span>
+                        </div>
+                      </div>
+                      {{#if this.comment}}
+                        <p class="review-card__comment">{{this.comment}}</p>
+                      {{/if}}
+                    </article>
+                  {{/each}}
+                {{else}}
+                  <p class="review-list__empty">Chưa có nhận xét nào. Hãy là người đầu tiên đánh giá!</p>
+                {{/if}}
+              </div>
+            </div>
+          </section>
         </div>
       </div>
     {{/if}}

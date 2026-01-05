@@ -28,6 +28,15 @@
           <div class="collections__card-body">
             <h2 class="collections__card-title">{{this.title}}</h2>
             <p class="collections__card-author">{{this.author}}</p>
+            <div class="collections__card-rating">
+              {{#if this.hasRating}}
+                <i class="fa-solid fa-star"></i>
+                <span>{{this.ratingLabel}}</span>
+                <span class="collections__card-rating-count">({{this.ratingCount}} đánh giá)</span>
+              {{else}}
+                <span class="collections__card-rating-empty">Chưa có đánh giá</span>
+              {{/if}}
+            </div>
             <div class="collections__card-price-row">
               <span class="collections__card-price">{{formatPrice this.newPrice}}</span>
               {{#if this.discountPercent}}

@@ -4,6 +4,15 @@ import mongoose from "mongoose";
 import Order from "../model/order.js";
 
 const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+const toBoolean = (value, fallback = false) => {
+  if (value === undefined || value === null) return fallback;
+  if (typeof value === "string") {
+    const normalized = value.trim().toLowerCase();
+    if (["true", "1", "on", "yes"].includes(normalized)) return true;
+    if (["false", "0", "off", "no", ""].includes(normalized)) return false;
+  }
+  return Boolean(value);
+};
 
 class UserController {
   async adminList(req, res, next) {
@@ -57,6 +66,7 @@ class UserController {
   async create(req, res, next) {
     try {
       const { fullName, email, password, role = "user", isActive } = req.body;
+      const isActiveFlag = toBoolean(isActive, true);
       const errors = [];
       if (!fullName) errors.push("Họ tên là bắt buộc.");
       if (!email) errors.push("Email là bắt buộc.");
@@ -68,7 +78,7 @@ class UserController {
           navActive: "users",
           formTitle: "Tạo người dùng",
           action: "/admin/users",
-          user: { fullName, email, role, isActive: Boolean(isActive) },
+          user: { fullName, email, role, isActive: isActiveFlag },
           errors,
           pageScript: "admin.js",
         });
@@ -80,7 +90,7 @@ class UserController {
           navActive: "users",
           formTitle: "Tạo người dùng",
           action: "/admin/users",
-          user: { fullName, email, role, isActive: Boolean(isActive) },
+          user: { fullName, email, role, isActive: isActiveFlag },
           errors: ["Email đã tồn tại."],
           pageScript: "admin.js",
         });
@@ -92,7 +102,7 @@ class UserController {
         email,
         role,
         passwordHash,
-        isActive: Boolean(isActive),
+        isActive: isActiveFlag,
       });
 
       return res.redirect("/admin/users?status=success&message=Tạo người dùng thành công");
@@ -134,6 +144,8 @@ class UserController {
       if (!user) {
         return res.redirect("/admin/users?status=error&message=Không tìm thấy người dùng");
       }
+      const wasActive = user.isActive;
+      const isActiveFlag = toBoolean(isActive, wasActive);
 
       const errors = [];
       if (!fullName) errors.push("Họ tên là bắt buộc.");
@@ -150,7 +162,7 @@ class UserController {
           navActive: "users",
           formTitle: "Chỉnh sửa người dùng",
           action: `/admin/users/${id}`,
-          user: { _id: id, fullName, email, role, isActive: Boolean(isActive) },
+          user: { _id: id, fullName, email, role, isActive: isActiveFlag },
           errors,
           pageScript: "admin.js",
         });
@@ -163,7 +175,7 @@ class UserController {
           navActive: "users",
           formTitle: "Chỉnh sửa người dùng",
           action: `/admin/users/${id}`,
-          user: { _id: id, fullName, email, role, isActive: Boolean(isActive) },
+          user: { _id: id, fullName, email, role, isActive: isActiveFlag },
           errors: ["Email đã tồn tại."],
           pageScript: "admin.js",
         });
@@ -172,13 +184,16 @@ class UserController {
       user.fullName = fullName;
       user.email = email;
       user.role = role;
-      user.isActive = Boolean(isActive);
+      user.isActive = isActiveFlag;
       if (password && password.length >= 6) {
         user.passwordHash = hashPassword(password);
       }
       await user.save();
 
-      return res.redirect("/admin/users?status=success&message=Cập nhật người dùng thành công");
+      const justLocked = wasActive && !isActiveFlag;
+      const status = justLocked ? "error" : "success";
+      const message = justLocked ? "Người dùng đã bị khoá." : "Cập nhật người dùng thành công";
+      return res.redirect(`/admin/users?status=${status}&message=${encodeURIComponent(message)}`);
     } catch (error) {
       next(error);
     }
